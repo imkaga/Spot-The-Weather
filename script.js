@@ -55,5 +55,3 @@ const weatherIcon = document.querySelector(".weather-icon");
     searchBtn.addEventListener("click", ()=>{
         checkWeather(searchBox.value);
     })
-
-    /* 30:47 */
