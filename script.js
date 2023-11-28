@@ -9,6 +9,8 @@ const weatherIcon = document.querySelector(".weather-icon");
             try {
                 const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
 
+                // Error jeśli wpiszesz złą nazwę miejscowości
+
                 if(response.status == 404){
                     document.querySelector(".error").style.display = "block";
                     document.querySelector(".weather").style.display = "none";
@@ -20,11 +22,21 @@ const weatherIcon = document.querySelector(".weather-icon");
                     const data = await response.json();
                     /* console.log(data); */
     
+                    // Wyświetlanie wartości z API
+                    // Miasto, temperatura, wilgotność, prędkość wiatru
+                    // Pozostałe wartości dostępne z API: https://openweathermap.org/current
+
                     document.querySelector(".city").innerHTML = data.name;
                     document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
                     document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
                     document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
     
+                    /*
+                    Opis IF:
+                    Jeżeli data.weather[0].main == "Warunek Pogodowy"
+                    Można to dostosowac do innych bardziej specyficznych warunków lub kilka wartości np. inny mood jesli jest deszcz i gorąco/lato niż jak deszcz i zimno/jesień
+                    */
+
                     if(data.weather[0].main == "Clouds"){
                         weatherIcon.src = "images/clouds.png"
                     }
@@ -51,6 +63,7 @@ const weatherIcon = document.querySelector(".weather-icon");
                 console.error(error);
             }
         }
+
 
     searchBtn.addEventListener("click", ()=>{
         checkWeather(searchBox.value);
