@@ -1,6 +1,9 @@
+import { Routes, Route } from 'react-router-dom'
 import React from 'react';
 import axios from 'axios';
+import Header from './components/Header';
 import Home from './components/Home';
+import Profile from './components/Profile';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./styles/styles.css";
 import './App.css';
@@ -14,18 +17,23 @@ const redirectUri = 'http://localhost:3000/'; // Redirect URL
 const clientSecret = '343770fe2dcc4167acd9722f8c3424d9'; //Client Secret Spotify
 
 function App() {
-  const handleLogin = () => {
+  /* const handleLogin = () => {
     window.location.href = 'https://accounts.spotify.com/authorize' +
       '?response_type=code' +
       '&client_id=' + clientId + // Using the defined clientId variable
       '&redirect_uri=' + redirectUri + // Using the defined redirectUri variable
       '&scope=user-read-private%20user-read-email'; // Adjust scopes as per your application's requirements
-  };
+  }; */
 
   return (
     <div className="App">
-      <Home />
-      <button onClick={handleLogin}>Login with Spotify</button>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="profile" element={<Profile />} />
+      </Routes>
+      {/* <Home />
+      <button onClick={handleLogin}>Login with Spotify</button> */}
     </div>
   );
 }

@@ -19,6 +19,7 @@ async function authenticate() {
     window.location.href = `https://accounts.spotify.com/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=code`;
 }
 
+// Funkcja logowania 
 async function handleAuthorizationCode() {
     const params = new URLSearchParams(window.location.search);
     const authorizationCode = params.get('code');
@@ -46,7 +47,7 @@ async function handleAuthorizationCode() {
             }
 
             localStorage.setItem('access_token', accessToken);
-            window.location.href = '/home';
+            window.location.href = '/';
         } catch (error) {
             console.error('Error exchanging authorization code:', error);
         }
@@ -108,6 +109,14 @@ function Home() {
     const [errorMessage, setErrorMessage] = useState('');
     const [userName, setUserName] = useState('');
     const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'main'); // Initialize theme from localStorage or default to 'main'
+
+    const handleLogin = () => {
+        window.location.href = 'https://accounts.spotify.com/authorize' +
+          '?response_type=code' +
+          '&client_id=' + clientId + // Using the defined clientId variable
+          '&redirect_uri=' + redirectUri + // Using the defined redirectUri variable
+          '&scope=user-read-private%20user-read-email'; // Adjust scopes as per your application's requirements
+      };
 
     // Call handleAuthorizationCode when your component mounts
     useEffect(() => {
@@ -211,6 +220,7 @@ function Home() {
     // Sekcja typu <body>
     return (
         <>
+        {/* 
             <h1 className="is-size-1">Spot The Weather</h1>
             <button className="theme-btn" onClick={toggleTheme}>Theme</button>
             <header>
@@ -231,6 +241,7 @@ function Home() {
                     </ul>
                 </nav>
             </header>
+        */}
             <div className="container">
                 <div className="card">
                     <div className="search">
@@ -255,6 +266,7 @@ function Home() {
                         </div>
                     )}
                 </div>
+                    <button onClick={handleLogin}>Login with Spotify</button>
             </div>
         </>
     );
