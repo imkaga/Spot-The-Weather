@@ -45,23 +45,61 @@ header{
     margin-bottom: 45px;
 }
 
-.card{
+.card {
     background: #1EBA55;
     color: #fff;
     border-radius: 25px;
     width: 80%;
-    justify-content: center;
-    text-align: center;
-    margin: 50px auto 0;
-    width: 80%;
     max-width: 1200px;
-    transition: width 1s ease-in-out, left 1.5s ease-in-out;
-    height: 300px auto;
+    margin: 50px auto 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-height: 500px; /* Minimum height set to 500px */
+}
+
+.card-content {
+    flex-grow: 1; /* Allow content area to grow */
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .card img{
     max-width: 100px;
     height: auto;
+}
+
+.search {
+    position: relative; /* Change position to relative */
+    margin-top: 10px; /* Adjust margin to create space between search bar and other content */
+    width: 30%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.search input[type="text"],
+.search button {
+    display: inline-block; /* Display input and button side by side */
+    vertical-align: middle; /* Align elements vertically */
+}
+
+.search input[type="text"] {
+    width: calc(70% - 10px); /* Adjust width for input */
+    border-radius: 15px 0 0 15px; /* Apply rounded border to left side of input */
+    border: none;
+    padding: 10px;
+}
+
+.search button {
+    width: calc(30% - 10px); /* Adjust width for button */
+    border-radius: 0 15px 15px 0; /* Apply rounded border to right side of button */
+    border: none;
+    padding: 10px;
+    background-color: #2F8F51;
+    color: #E8DED1;
+    cursor: pointer;
 }
 
 .weather{

@@ -142,3 +142,19 @@ export async function getTopTracks(accessToken) {
         throw error;
     }
 }
+
+// Utils.js
+
+export const getRecommendations = async (accessToken, seedArtists, seedGenres, seedTracks) => {
+    const url = `https://api.spotify.com/v1/recommendations?seed_artists=${seedArtists}&seed_genres=${seedGenres}&seed_tracks=${seedTracks}`;
+    const response = await fetch(url, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+    if (!response.ok) {
+        throw new Error('Failed to fetch recommendations');
+    }
+    return response.json();
+};
+

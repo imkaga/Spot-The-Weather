@@ -8,6 +8,8 @@ function Home() {
     const [userName, setUserName] = useState(''); // State for storing user's name
     const [loggedIn, setLoggedIn] = useState(false); // State for user login status
     const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'main'); // State for storing theme
+    const [recommendedTracks, setRecommendedTracks] = useState([]); // State for storing recommended tracks
+    
 
     const handleLogin = Utils.authenticate; // Function for handling login
 
@@ -126,6 +128,19 @@ function Home() {
         setTheme((prevTheme) => (prevTheme === 'main' ? 'light' : 'main'));
     };
 
+    const recommendSongs = async () => {
+        try {
+            const accessToken = localStorage.getItem('access_token');
+            const seedArtists = '4NHQUGzhtTLFvgF5SZesLK';
+            const seedGenres = 'classical,country';
+            const seedTracks = '0c6xIDDpzE81m2q797ordA';
+            const response = await Utils.getRecommendations(accessToken, seedArtists, seedGenres, seedTracks);
+            setRecommendedTracks(response.tracks);
+        } catch (error) {
+            console.error('Error fetching recommended tracks:', error);
+        }
+    };
+
     return (
         <>
             <div className="container">
@@ -141,17 +156,38 @@ function Home() {
                         />
                         <button onClick={handleSearch}>Search</button>
                     </div>
+
                     {errorMessage && <div className="error"><p>{errorMessage}</p></div>}
                     {weatherData && (
                         <div className="weather">
-                            <h3>Hello, {userName}!</h3>
+                            <h3>Cześć, {userName}!</h3>
                             <h2>Weather in {weatherData.name}</h2>
+                            <p>Condition: {weatherData.weather[0].main}</p>
                             <p>Temperature: {Math.round(weatherData.main.temp)}°C</p>
                             <p>Humidity: {weatherData.main.humidity}%</p>
                             <p>Wind Speed: {weatherData.wind.speed} km/h</p>
                         </div>
                     )}
+
+                {/* Rekomendacja Piosenek */}
+                <div className="container">
+                    <button onClick={recommendSongs}>Recommend Songs</button>
+                    {recommendedTracks.length > 0 && (
+                     <div>
+                    <h3>Recommended Songs</h3>
+                    <ul>
+                        {recommendedTracks.map((track, index) => (
+                            <li key={index}>{track.name} - {track.artists.map(artist => artist.name).join(', ')}</li>
+                        ))}
+                    </ul>
+                    </div>
+                     )}
+                    </div>
+
+                
                 </div>
+                
+
                 <button className="theme-btn" onClick={toggleTheme}>Theme</button>
                 {loggedIn ? (
                     <button onClick={handleLogout}>Logout</button>
