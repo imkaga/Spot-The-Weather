@@ -6,7 +6,7 @@ body {
 
 /* Light theme */
 .light-theme { 
-    background-color: white;  /* Alternative - #E8DED1 */
+    background-color: #E8DED1;  /* Alternative - #E8DED1 */
     color: #191414; /* Alternative - #e246ab */
 }
 
@@ -94,6 +94,18 @@ header{
     background-color: #326544;
     text-decoration: none;
 }
+
+.numbered-list {
+    list-style: none; /* Remove default numbering */
+    counter-reset: list-counter; /* Reset counter */
+    text-align: left;
+}
+
+.numbered-list li::before {
+    content: counter(list-counter) ". "; /* Add custom numbering */
+    counter-increment: list-counter; /* Increment counter */
+}
+
 
 /* Media query for smaller screen sizes (e.g., mobile devices) */
 @media screen and (max-width: 760px) {
