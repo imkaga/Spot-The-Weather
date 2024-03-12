@@ -32,8 +32,6 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="profile" element={<Profile />} />
       </Routes>
-      {/* <Home />
-      <button onClick={handleLogin}>Login with Spotify</button> */}
     </div>
   );
 }

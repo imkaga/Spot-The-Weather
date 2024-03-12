@@ -6,8 +6,8 @@ body {
 
 /* Light theme */
 .light-theme { 
-    background-color: white; 
-    color: #191414; 
+    background-color: white;  /* Alternative - #E8DED1 */
+    color: #191414; /* Alternative - #e246ab */
 }
 
 .nav-item{

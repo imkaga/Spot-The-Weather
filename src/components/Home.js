@@ -108,6 +108,7 @@ function Home() {
     const [weatherData, setWeatherData] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
     const [userName, setUserName] = useState('');
+    const [loggedIn, setLoggedIn] = useState(false); // State variable to track login status
     const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'main'); // Initialize theme from localStorage or default to 'main'
 
     const handleLogin = () => {
@@ -117,6 +118,16 @@ function Home() {
           '&redirect_uri=' + redirectUri + // Using the defined redirectUri variable
           '&scope=user-read-private%20user-read-email'; // Adjust scopes as per your application's requirements
       };
+
+      const handleLogout = () => {
+        // Clear access token and refresh token from local storage
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        // Update loggedIn state
+        setLoggedIn(false);
+        // Redirect to home page or any other desired page
+        window.location.href = '/';
+    };
 
     // Call handleAuthorizationCode when your component mounts
     useEffect(() => {
@@ -163,6 +174,7 @@ function Home() {
                 .then(data => {
                     if (data) {
                         setUserName(data.display_name);
+                        setLoggedIn(true); // Set loggedIn to true when user is logged in
                     }
                 })
                 .catch(error => {
@@ -266,7 +278,12 @@ function Home() {
                         </div>
                     )}
                 </div>
+                
+                {loggedIn ? (
+                    <button onClick={handleLogout}>Logout</button>
+                ) : (
                     <button onClick={handleLogin}>Login with Spotify</button>
+                )}
             </div>
         </>
     );
