@@ -128,18 +128,41 @@ function Home() {
         setTheme((prevTheme) => (prevTheme === 'main' ? 'light' : 'main'));
     };
 
+    
+
     const recommendSongs = async () => {
         try {
             const accessToken = localStorage.getItem('access_token');
-            const seedArtists = '4NHQUGzhtTLFvgF5SZesLK';
-            const seedGenres = 'classical,country';
-            const seedTracks = '0c6xIDDpzE81m2q797ordA';
-            const response = await Utils.getRecommendations(accessToken, seedArtists, seedGenres, seedTracks);
+            const weatherGenre = mapWeatherToGenres(weatherData); // Get the mapped genre based on weather
+            const response = await Utils.getRecommendations(accessToken, null, weatherGenre, null);
             setRecommendedTracks(response.tracks);
         } catch (error) {
             console.error('Error fetching recommended tracks:', error);
         }
     };
+    
+    const mapWeatherToGenres = (weatherData) => {
+        // Map weather conditions to corresponding music genres
+        const weatherCondition = weatherData.weather[0].main.toLowerCase();
+        switch (weatherCondition) {
+            case 'clear':
+                return 'pop'; // Example genre for clear weather
+            case 'rain':
+                return 'chill'; // Example genre for rainy weather
+            case 'clouds':
+                return 'indie'; // Example genre for cloudy weather
+            // Add more cases for other weather conditions as needed
+            default:
+                return 'pop'; // Default genre if weather condition doesn't match any specific genre
+        }
+    };
+
+    useEffect(() => { // Effect for handling search and recommending songs
+        if (weatherData) {
+            recommendSongs();
+        }
+    }, [weatherData]);
+    
 
     return (
         <>
@@ -168,7 +191,6 @@ function Home() {
                             <p>Wind Speed: {weatherData.wind.speed} km/h</p>
                         </div>
                     )}
-
                 {/* Rekomendacja Piosenek */}
                 <div className="container">
                     <button onClick={recommendSongs}>Recommend Songs</button>

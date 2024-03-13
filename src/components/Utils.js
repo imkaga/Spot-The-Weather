@@ -146,7 +146,13 @@ export async function getTopTracks(accessToken) {
 // Utils.js
 
 export const getRecommendations = async (accessToken, seedArtists, seedGenres, seedTracks) => {
-    const url = `https://api.spotify.com/v1/recommendations?seed_artists=${seedArtists}&seed_genres=${seedGenres}&seed_tracks=${seedTracks}`;
+    let url = `https://api.spotify.com/v1/recommendations?seed_genres=${seedGenres}`;
+    if (seedArtists) {
+        url += `&seed_artists=${seedArtists}`;
+    }
+    if (seedTracks) {
+        url += `&seed_tracks=${seedTracks}`;
+    }
     const response = await fetch(url, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
