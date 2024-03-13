@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/Spot-The-Weather/static/css/main.ff2fd9c0.css",
+    "main.js": "/Spot-The-Weather/static/js/main.aede3e68.js",
+    "static/js/453.69fb7948.chunk.js": "/Spot-The-Weather/static/js/453.69fb7948.chunk.js",
+    "index.html": "/Spot-The-Weather/index.html",
+    "main.ff2fd9c0.css.map": "/Spot-The-Weather/static/css/main.ff2fd9c0.css.map",
+    "main.aede3e68.js.map": "/Spot-The-Weather/static/js/main.aede3e68.js.map",
+    "453.69fb7948.chunk.js.map": "/Spot-The-Weather/static/js/453.69fb7948.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ff2fd9c0.css",
+    "static/js/main.aede3e68.js"
+  ]
+}
