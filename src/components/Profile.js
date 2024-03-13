@@ -49,16 +49,14 @@ export default function Profile() {
             <img src={profilePicture} alt="Profile" /> {/* Display profile picture */}
             <p>Followers: {followersCount}</p> {/* Display followers count */}
             
-            <h2>Top 10 Piosenek:</h2>
             <ol className="numbered-list">
-    {topTracks.map((track, index) => (
-        <li key={track.id}>
-            {track.name} - {track.artists.map(artist => artist.name).join(', ')}
-        </li>
-    ))}
-</ol>
-
-
+            <h2>Top 10 Piosenek:</h2>
+                {topTracks.map((track, index) => (
+                    <li key={track.id}>
+                        <span style={{ fontWeight: 'bold' }}>{track.artists.map(artist => artist.name).join(', ')}</span> - {track.name}
+                    </li>
+                ))}
+            </ol>
         </>
     )
 }

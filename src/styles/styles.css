@@ -84,9 +84,10 @@ header{
 .search button {
     display: inline-block;
     vertical-align: middle;
-    width: 45%; /* Adjust width for input and button */
+    width: 40%; /* Adjust width for input and button */
     max-width: calc(100% - 20px); /* Limit maximum width */
     padding: 10px;
+    text-align: center;
 }
 
 .search input[type="text"] {
@@ -98,8 +99,9 @@ header{
     border-radius: 0 15px 15px 0;
     border: none;
     background-color: #2F8F51;
-    color: #E8DED1;
+    color: #ffffff;
     cursor: pointer;
+    font-weight: bold;
 }
 
 
@@ -149,8 +151,22 @@ header{
     margin-top: 40px;
 }
 
+.recommended {
+    list-style: none; /* Remove default numbering */
+    counter-reset: none; /* Reset counter */
+    text-align: left; /* Align text to the left */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the list horizontally */
+    padding: 0; /* Remove default padding */
+}
+
+.recommended li {
+    text-align: left; /* Align text to the left */
+}
+
 /* Media query for smaller screen sizes (e.g., mobile devices) */
-@media screen and (max-width: 760px) {
+@media screen and (max-width: 700px) {
     .nav-item {
        /* width: calc(50% - 10px); /* Set width to 50% minus margin */
         margin-right: 10px; /* Remove margin between items */
