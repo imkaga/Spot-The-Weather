@@ -9,7 +9,13 @@ export const apiUrl = openWeatherApiUrl;
 export async function authenticate() {
     // Function to handle authentication flow
     // Redirect user to Spotify authorization endpoint
-    const scopes = ['user-read-private', 'user-read-email', 'user-top-read']; // Add necessary scopes
+    const scopes = [
+        'user-read-private', 
+        'user-read-email', 
+        'user-top-read', 
+        'playlist-modify-public', 
+        'playlist-modify-private'
+    ]; // Add necessary scopes for playlist modification
     window.location.href = `https://accounts.spotify.com/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=code`;
 }
 
@@ -164,3 +170,52 @@ export const getRecommendations = async (accessToken, seedArtists, seedGenres, s
     return response.json();
 };
 
+// In Utils.js
+
+// Existing imports and exports...
+
+export async function createPlaylist(accessToken, userId, weatherData) {
+    const cityName = weatherData.name; // Extract city name from weather data
+    const weatherCondition = weatherData.weather[0].main.toLowerCase(); // Extract weather condition from weather data
+    const formattedDate = `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`;
+    const playlistName = `${cityName}-${weatherCondition}_${formattedDate}`;
+
+    const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            name: playlistName,
+            public: true,
+        }),
+    });
+    if (!response.ok) {
+        throw new Error('Failed to create playlist');
+    }
+    return response.json();
+}
+
+
+
+export async function addTracksToPlaylist(accessToken, userId, playlistId, trackUris) {
+    const url = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            uris: trackUris,
+        }),
+    });
+    if (!response.ok) {
+        throw new Error('Failed to add tracks to playlist');
+    }
+    return response.json();
+}
+
+// Existing functions and exports...

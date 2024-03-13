@@ -9,6 +9,8 @@ function Home() {
     const [loggedIn, setLoggedIn] = useState(false); // State for user login status
     const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'main'); // State for storing theme
     const [recommendedTracks, setRecommendedTracks] = useState([]); // State for storing recommended tracks
+    const [userId, setUserId] = useState(''); // State for storing user's Spotify user ID
+
     
 
     const handleLogin = Utils.authenticate; // Function for handling login
@@ -31,6 +33,7 @@ function Home() {
                             if (data) {
                                 console.log('User Profile:', data); // Logging user profile
                                 setUserName(data.display_name); // Setting user's name
+                                setUserId(data.id); // Set the user's Spotify user ID
                             }
                         })
                         .catch(error => {
@@ -163,6 +166,70 @@ function Home() {
         }
     }, [weatherData]);
     
+     // Function to create playlist and add recommended songs
+     const savePlaylist = async () => {
+        try {
+            const accessToken = localStorage.getItem('access_token');
+            if (accessToken && userId && weatherData) { // Make sure weatherData is available
+                // Create playlist
+                const playlistResponse = await createPlaylist(accessToken, userId, weatherData);
+                const playlistId = playlistResponse.id;
+    
+                // Add recommended tracks to the playlist
+                await addTracksToPlaylist(accessToken, userId, playlistId, recommendedTracks.map(track => track.uri));
+    
+                console.log('Playlist created and tracks added successfully');
+            } else {
+                console.error('Access token, user ID, or weather data not found');
+            }
+        } catch (error) {
+            console.error('Error saving playlist:', error);
+        }
+    };
+    
+    const createPlaylist = async (accessToken, userId, weatherData) => {
+        const cityName = weatherData.name; // Extract city name from weather data
+        const weatherCondition = weatherData.weather[0].main.toLowerCase(); // Extract weather condition from weather data
+        const formattedDate = `${new Date().getDate().toString().padStart(2, '0')}/${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getFullYear()}`;
+        const playlistName = `${cityName}-${weatherCondition}-${formattedDate}`;
+    
+        const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: playlistName,
+                public: true,
+            }),
+        });
+        if (!response.ok) {
+            throw new Error('Failed to create playlist');
+        }
+        return response.json();
+    };
+    
+
+    const addTracksToPlaylist = async (accessToken, userId, playlistId, trackUris) => {
+        const url = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                uris: trackUris,
+            }),
+        });
+        if (!response.ok) {
+            throw new Error('Failed to add tracks to playlist');
+        }
+        return response.json();
+    };
+
 
     return (
         <>
@@ -202,6 +269,7 @@ function Home() {
                             <li key={index}>{track.name} - {track.artists.map(artist => artist.name).join(', ')}</li>
                         ))}
                     </ul>
+                    <button onClick={savePlaylist}>Save Playlist</button>
                     </div>
                      )}
                     </div>
