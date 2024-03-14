@@ -11,7 +11,6 @@ function Home() {
     const [recommendedTracks, setRecommendedTracks] = useState([]); // State for storing recommended tracks
     const [userId, setUserId] = useState(''); // State for storing user's Spotify user ID
 
-    
 
     const handleLogin = Utils.authenticate; // Function for handling login
 

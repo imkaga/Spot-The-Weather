@@ -108,8 +108,6 @@ export async function getTopArtists(accessToken) {
     return data;
 }
 
-// Other imports and exports remain the same
-
 export async function fetchWeatherData(city) {
     try {
         const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
@@ -149,8 +147,6 @@ export async function getTopTracks(accessToken) {
     }
 }
 
-// Utils.js
-
 export const getRecommendations = async (accessToken, seedArtists, seedGenres, seedTracks) => {
     let url = `https://api.spotify.com/v1/recommendations?seed_genres=${seedGenres}`;
     if (seedArtists) {
@@ -169,10 +165,6 @@ export const getRecommendations = async (accessToken, seedArtists, seedGenres, s
     }
     return response.json();
 };
-
-// In Utils.js
-
-// Existing imports and exports...
 
 export async function createPlaylist(accessToken, userId, weatherData) {
     const cityName = weatherData.name; // Extract city name from weather data
@@ -198,8 +190,6 @@ export async function createPlaylist(accessToken, userId, weatherData) {
     return response.json();
 }
 
-
-
 export async function addTracksToPlaylist(accessToken, userId, playlistId, trackUris) {
     const url = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`;
     const response = await fetch(url, {
@@ -217,5 +207,3 @@ export async function addTracksToPlaylist(accessToken, userId, playlistId, track
     }
     return response.json();
 }
-
-// Existing functions and exports...
