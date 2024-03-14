@@ -286,7 +286,6 @@ function Home() {
                             <p>Condition: {weatherData.weather[0].main}</p>
                             <p>Temperature: {Math.round(weatherData.main.temp)}°C</p>
                             <p>Humidity: {weatherData.main.humidity}%</p>
-                            <p>Wind Speed: {weatherData.wind.speed} km/h</p>
                         </div>
                     )}
                     <div className="container">
