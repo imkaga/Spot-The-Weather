@@ -8,9 +8,12 @@ function Home() {
     const [userName, setUserName] = useState(''); // State for storing user's name
     const [loggedIn, setLoggedIn] = useState(false); // State for user login status
     const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'main'); // State for storing theme
-    const [recommendedTracks, setRecommendedTracks] = useState([]); // State for storing recommended tracks
+    const [recommendedTracks, setRecommendedTracks] = useState(() => JSON.parse(localStorage.getItem('recommendedTracks')) || []); // State for storing recommended tracks
     const [userId, setUserId] = useState(''); // State for storing user's Spotify user ID
-
+    const [refreshCount, setRefreshCount] = useState(0); // State for storing the refresh count
+    const [lastRefreshTime, setLastRefreshTime] = useState(() => parseInt(localStorage.getItem('lastRefreshTime')) || null); // State for storing the last refresh time
+    const [countdown, setCountdown] = useState(null); // State for countdown until next refresh
+    const [showButton, setShowButton] = useState(true); // State for showing or hiding the refresh button
 
     const handleLogin = Utils.authenticate; // Function for handling login
 
@@ -103,6 +106,35 @@ function Home() {
         localStorage.setItem('theme', theme);
     }, [theme]);
 
+    useEffect(() => { // Effect for handling countdown until next refresh
+        const storedLastRefreshTime = localStorage.getItem('lastRefreshTime');
+        if (storedLastRefreshTime) {
+            const remainingTime = 5 * 60 * 1000 - (Date.now() - parseInt(storedLastRefreshTime));
+            if (remainingTime > 0) {
+                setCountdown(remainingTime);
+                setShowButton(false); // Hide the button when countdown starts
+            }
+        }
+    }, []);
+    
+
+    useEffect(() => { // Effect for updating countdown timer
+        if (countdown !== null) {
+            const timer = setInterval(() => {
+                setCountdown(prevCountdown => {
+                    if (prevCountdown <= 0) {
+                        clearInterval(timer);
+                        setShowButton(true); // Show the button when countdown ends
+                        return 0;
+                    } else {
+                        return prevCountdown - 1000;
+                    }
+                });
+            }, 1000);
+            return () => clearInterval(timer);
+        }
+    }, [countdown]);
+
     const handleSearch = () => { // Function for handling search
         Utils.fetchWeatherData(city)
             .then(({ data, error }) => {
@@ -112,6 +144,8 @@ function Home() {
                     setWeatherData(data);
                     setErrorMessage('');
                     localStorage.setItem('lastCity', city);
+                    setRefreshCount(0); // Reset refresh count when city is changed
+                    setShowButton(true); // Show the button after search
                 }
             });
     };
@@ -130,20 +164,27 @@ function Home() {
         setTheme((prevTheme) => (prevTheme === 'main' ? 'light' : 'main'));
     };
 
-    
-
-    const recommendSongs = async () => {
+    const recommendSongs = async () => { // Function for recommending songs
         try {
+            console.log('Refreshing recommendations...'); // Console log to indicate refreshing recommendations
             const accessToken = localStorage.getItem('access_token');
             const weatherGenre = mapWeatherToGenres(weatherData); // Get the mapped genre based on weather
             const response = await Utils.getRecommendations(accessToken, null, weatherGenre, null);
+            localStorage.setItem('recommendedTracks', JSON.stringify(response.tracks)); // Store recommended tracks in localStorage
             setRecommendedTracks(response.tracks);
+            localStorage.setItem('lastRefreshTime', Date.now());
+            setLastRefreshTime(Date.now());
+            setRefreshCount(prevCount => prevCount + 1);
+            if (refreshCount + 1 === 5) {
+                setCountdown(5 * 60 * 1000);
+                setShowButton(false); // Hide the button after 5 clicks
+            }
         } catch (error) {
             console.error('Error fetching recommended tracks:', error);
         }
     };
-    
-    const mapWeatherToGenres = (weatherData) => {
+
+    const mapWeatherToGenres = (weatherData) => { // Function for mapping weather to genres
         // Map weather conditions to corresponding music genres
         const weatherCondition = weatherData.weather[0].main.toLowerCase();
         switch (weatherCondition) {
@@ -159,24 +200,17 @@ function Home() {
         }
     };
 
-    useEffect(() => { // Effect for handling search and recommending songs
-        if (weatherData) {
-            recommendSongs();
-        }
-    }, [weatherData]);
-    
-     // Function to create playlist and add recommended songs
-     const savePlaylist = async () => {
+    const savePlaylist = async () => { // Function for saving playlist
         try {
             const accessToken = localStorage.getItem('access_token');
             if (accessToken && userId && weatherData) { // Make sure weatherData is available
                 // Create playlist
                 const playlistResponse = await createPlaylist(accessToken, userId, weatherData);
                 const playlistId = playlistResponse.id;
-    
+
                 // Add recommended tracks to the playlist
                 await addTracksToPlaylist(accessToken, userId, playlistId, recommendedTracks.map(track => track.uri));
-    
+
                 console.log('Playlist created and tracks added successfully');
             } else {
                 console.error('Access token, user ID, or weather data not found');
@@ -185,13 +219,13 @@ function Home() {
             console.error('Error saving playlist:', error);
         }
     };
-    
-    const createPlaylist = async (accessToken, userId, weatherData) => {
+
+    const createPlaylist = async (accessToken, userId, weatherData) => { // Function for creating playlist
         const cityName = weatherData.name; // Extract city name from weather data
         const weatherCondition = weatherData.weather[0].main.toLowerCase(); // Extract weather condition from weather data
         const formattedDate = `${new Date().getDate().toString().padStart(2, '0')}/${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getFullYear()}`;
         const playlistName = `${cityName}-${weatherCondition}-${formattedDate}`;
-    
+
         const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
         const response = await fetch(url, {
             method: 'POST',
@@ -209,9 +243,8 @@ function Home() {
         }
         return response.json();
     };
-    
 
-    const addTracksToPlaylist = async (accessToken, userId, playlistId, trackUris) => {
+    const addTracksToPlaylist = async (accessToken, userId, playlistId, trackUris) => { // Function for adding tracks to playlist
         const url = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`;
         const response = await fetch(url, {
             method: 'POST',
@@ -228,7 +261,6 @@ function Home() {
         }
         return response.json();
     };
-
 
     return (
         <>
@@ -257,25 +289,29 @@ function Home() {
                             <p>Wind Speed: {weatherData.wind.speed} km/h</p>
                         </div>
                     )}
-                {/* Rekomendacja Piosenek */}
-                <div className="container">
-                    <button onClick={recommendSongs}>Recommend Songs</button>
-                    {recommendedTracks.length > 0 && (
-                     <div>
-                    <h3>Recommended Songs</h3>
-                    <ul>
-                        {recommendedTracks.map((track, index) => (
-                            <li key={index}>{track.name} - {track.artists.map(artist => artist.name).join(', ')}</li>
-                        ))}
-                    </ul>
-                    <button onClick={savePlaylist}>Save Playlist</button>
+                    <div className="container">
+                        {!showButton && countdown !== null && (
+                            <div>
+                                <p>You used up all of your refreshes. Please wait:</p>
+                                <p>{Math.floor(countdown / 60000)}:{(countdown % 60000 / 1000).toFixed(0).padStart(2, '0')}</p>
+                            </div>
+                        )}
+                        {showButton && (
+                            <button onClick={recommendSongs}>Refresh recommendations</button>
+                        )}
+                        {recommendedTracks.length > 0 && (
+                            <div>
+                                <h3>Recommended Songs</h3>
+                                <ul>
+                                    {recommendedTracks.map((track, index) => (
+                                        <li key={index}>{track.name} - {track.artists.map(artist => artist.name).join(', ')}</li>
+                                    ))}
+                                </ul>
+                                <button onClick={savePlaylist}>Save Playlist</button>
+                            </div>
+                        )}
                     </div>
-                     )}
-                    </div>
-
-                
                 </div>
-                
 
                 <button className="theme-btn" onClick={toggleTheme}>Theme</button>
                 {loggedIn ? (
