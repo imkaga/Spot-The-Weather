@@ -14,12 +14,15 @@ function Home() {
     const [lastRefreshTime, setLastRefreshTime] = useState(() => parseInt(localStorage.getItem('lastRefreshTime')) || null); // State for storing the last refresh time
     const [countdown, setCountdown] = useState(null); // State for countdown until next refresh
     const [showButton, setShowButton] = useState(true); // State for showing or hiding the refresh button
+    const [lastActivityTime, setLastActivityTime] = useState(Date.now()); // State for tracking user activity
+
 
     const handleLogin = Utils.authenticate; // Function for handling login
 
     const handleLogout = () => { // Function for handling logout
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
+        localStorage.removeItem('login_time'); // Remove login time on logout
         setLoggedIn(false);
         window.location.href = '/';
     };
@@ -49,6 +52,60 @@ function Home() {
                 console.error('Error handling authorization code:', error);
             });
     }, []);
+
+    useEffect(() => {
+        // Check login status and session expiry on component mount
+        checkLoginStatus();
+        // Add event listener for user activity
+        window.addEventListener('mousemove', handleUserActivity);
+        window.addEventListener('keypress', handleUserActivity);
+
+        return () => {
+            // Cleanup event listener on component unmount
+            window.removeEventListener('mousemove', handleUserActivity);
+            window.removeEventListener('keypress', handleUserActivity);
+        };
+    }, []);
+
+    useEffect(() => {
+        // Check login status and session expiry when last activity time changes
+        checkLoginStatus();
+    }, [lastActivityTime]);
+
+    const checkLoginStatus = () => {
+        const loginTime = localStorage.getItem('login_time');
+        const isLoggedIn = localStorage.getItem('access_token') !== null;
+
+        if (isLoggedIn && loginTime) {
+            const currentTime = Date.now();
+            const sessionDuration = 60 * 60 * 1000; // Session duration in milliseconds (1 hour)
+
+            if (currentTime - parseInt(loginTime) > sessionDuration) {
+                // Session expired, logout user
+                handleLogout();
+            } else {
+                setLoggedIn(true);
+            }
+        }
+    };
+
+    const handleUserActivity = () => {
+        // Update last activity time when user interacts with the page
+        setLastActivityTime(Date.now());
+    };
+
+    const handleBeforeUnload = () => {
+        // Clear recommended tracks from local storage when the user closes the app
+        localStorage.removeItem('recommendedTracks');
+    };
+
+    useEffect(() => {
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, []);
+    
 
     useEffect(() => { // Effect for setting city and fetching weather data
         const lastCity = localStorage.getItem('lastCity');
@@ -281,7 +338,15 @@ function Home() {
                     {errorMessage && <div className="error"><p>{errorMessage}</p></div>}
                     {weatherData && (
                         <div className="weather">
-                            <h3>Cześć, {userName}!</h3>
+                            {!loggedIn && ( // Render only if not logged in
+                                <>
+                                    <h3>Cześć!</h3>
+                                    <h4>Jeśli chcesz skorzystać z wszystkich dostępnych opcji aplikacji, zaloguj się.</h4>
+                                </>
+                            )}
+                            {loggedIn && ( // Render only if logged in
+                                <h3>Cześć, {userName}!</h3>
+                            )}
                             <h2>Weather in {weatherData.name}</h2>
                             <p>Condition: {weatherData.weather[0].main}</p>
                             <p>Temperature: {Math.round(weatherData.main.temp)}°C</p>
@@ -289,14 +354,14 @@ function Home() {
                         </div>
                     )}
                     <div className="container">
-                        {!showButton && countdown !== null && (
+                    {loggedIn && !showButton && countdown !== null && ( // Check loggedIn and showButton states
                             <div>
                                 <p>You used up all of your refreshes. Please wait:</p>
                                 <p>{Math.floor(countdown / 60000)}:{(countdown % 60000 / 1000).toFixed(0).padStart(2, '0')}</p>
                             </div>
                         )}
-                        {showButton && (
-                            <button onClick={recommendSongs}>Refresh recommendations</button>
+                        {loggedIn && showButton && ( // Check both loggedIn and showButton states
+                             <button onClick={recommendSongs}>Refresh recommendations</button>
                         )}
                         {recommendedTracks.length > 0 && (
                             <div>
