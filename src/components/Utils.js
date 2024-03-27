@@ -20,7 +20,6 @@ export async function authenticate() {
 }
 
 export async function handleAuthorizationCode() {
-    // Function to handle authorization code
     const params = new URLSearchParams(window.location.search);
     const authorizationCode = params.get('code');
 
@@ -47,12 +46,46 @@ export async function handleAuthorizationCode() {
             }
 
             localStorage.setItem('access_token', accessToken);
+            localStorage.setItem('login_time', Date.now()); // Update login time
             window.location.href = '/';
         } catch (error) {
             console.error('Error exchanging authorization code:', error);
         }
+    } else {
+        const accessToken = localStorage.getItem('access_token');
+        const refreshToken = localStorage.getItem('refresh_token');
+        const loginTime = localStorage.getItem('login_time');
+
+        if (accessToken && refreshToken && loginTime) {
+            const currentTime = Date.now();
+            const sessionDuration = 60 * 60 * 1000; // Session duration in milliseconds (1 hour)
+
+            if (currentTime - parseInt(loginTime) > sessionDuration) {
+                // Session expired, refresh access token
+                try {
+                    const newAccessToken = await refreshAccessToken(refreshToken);
+                    localStorage.setItem('access_token', newAccessToken);
+                    localStorage.setItem('login_time', Date.now()); // Update login time
+                    console.log('Access Token Refreshed:', newAccessToken);
+                } catch (refreshError) {
+                    console.error('Error refreshing access token:', refreshError);
+                    handleLogout(); // Log out user if refresh token fails
+                }
+            }
+        }
     }
 }
+
+// Utils.js
+
+export async function handleLogout(logoutCallback) {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('login_time'); // Remove login time on logout
+    logoutCallback(false); // Call the callback function to update login state
+    window.location.href = '/';
+}
+
 
 export async function getProfile(accessToken) {
     // Function to fetch user's profile
@@ -190,20 +223,84 @@ export async function createPlaylist(accessToken, userId, weatherData) {
     return response.json();
 }
 
-export async function addTracksToPlaylist(accessToken, userId, playlistId, trackUris) {
-    const url = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`;
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            uris: trackUris,
-        }),
-    });
-    if (!response.ok) {
-        throw new Error('Failed to add tracks to playlist');
+export async function getRecommendedArtists(accessToken, seedGenres, minPopularity, maxPopularity, limit = 5) {
+    try {
+        // Ensure seedGenres is an array
+        if (!Array.isArray(seedGenres)) {
+            throw new Error('seedGenres must be an array');
+        }
+
+        // Construct query parameters
+        const queryParams = new URLSearchParams({
+            limit: limit,
+            seed_genres: seedGenres.join(','),
+            min_popularity: minPopularity,
+            max_popularity: maxPopularity
+        });
+
+        // Construct the URL for recommendations
+        const url = `https://api.spotify.com/v1/recommendations?${queryParams}`;
+
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch recommended artists. Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Recommended Artists Data:', data); // Log the response data
+        
+        return data;
+    } catch (error) {
+        console.error('Error fetching recommended artists:', error);
+        throw error;
     }
-    return response.json();
+}
+
+// Define popularityValues
+// Utils.js
+
+export const popularityValues = {
+    Niche: { min: 0, max: 25 },
+    Underground: { min: 26, max: 50 },
+    Popular: { min: 51, max: 75 },
+    VeryPopular: { min: 76, max: 100 }
+  };
+  
+  
+  export async function searchMusicRecommendations(accessToken, selectedGenre, tempo, popularity, limit) {
+    try {
+        const queryParams = new URLSearchParams({
+            seed_genres: selectedGenre || '',
+            min_tempo: tempo === 'fast' ? 120 : tempo === 'slow' ? 60 : 90,
+            max_tempo: tempo === 'fast' ? 180 : tempo === 'slow' ? 90 : 120,
+            min_popularity: popularity.min,
+            max_popularity: popularity.max,
+            limit: limit >= 10 && limit <= 30 ? limit : 10,
+        });
+
+        const url = `https://api.spotify.com/v1/recommendations?${queryParams}`;
+        
+        console.log('Fetching recommendations from:', url); // Add this line for logging
+        
+        const response = await fetch(url, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch recommendations');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching recommended tracks:', error);
+        throw error;
+    }
 }
