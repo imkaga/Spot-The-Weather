@@ -54,6 +54,8 @@ const FindMusic = () => {
   return (
     <>
       <h1>Find Music</h1>
+      <p>Ważne! Popularność muzyki nie jest określana przez ilość odsłuchań, a jak często była odsłuchiwana w ostatnim czasie. </p>
+      <br></br>
       <div>
         <form onSubmit={handleSubmit}>
           <label>Select Genre:</label>
@@ -80,7 +82,7 @@ const FindMusic = () => {
           </select>
 
           <label>Popularity:</label>
-            <select value={`${popularity.min}-${popularity.max}`} onChange={handlePopularityChange}>
+          <select value={`${popularity.min}-${popularity.max}`} onChange={handlePopularityChange}>
             <option value="">-</option>
             <option value="0-5">Underground</option>
             <option value="6-15">Niche</option>
@@ -88,8 +90,6 @@ const FindMusic = () => {
             <option value="41-70">Popular</option>
             <option value="71-100">Very Popular</option>
           </select>
-
-
 
           <label>Number of Songs:</label>
           <select value={limit} onChange={handleLimitChange}>
@@ -104,18 +104,29 @@ const FindMusic = () => {
 
       <div>
         <h3>Recommended Songs</h3>
+        <div class="recommended">
         <ul>
-          {recommendedTracks
-            .map((track, index) => (
-                <li key={index}>
-                  {track.name} - {track.artists.map((artist) => artist.name).join(', ')}
-                </li>
-              ))}
-          </ul>
+          {recommendedTracks.map((track, index) => (
+            <li key={index}>
+              <div>
+                <img src={track.album.images[0].url} alt="Album Cover" style={{ width: '50px', height: '50px' }} />
+              </div>
+              <div>
+              <span style={{ fontWeight: 'bold' }}>{track.artists.map(artist => artist.name).join(', ')}</span> - {track.name}
+                {track.preview_url && (
+                  <audio controls>
+                    <source src={track.preview_url} type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
         </div>
-      </>
-    );
-  };
-  
-  export default FindMusic;
-  
+      </div>
+    </>
+  );
+};
+
+export default FindMusic;

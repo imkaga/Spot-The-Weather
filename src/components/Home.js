@@ -271,8 +271,6 @@ function Home() {
         }
     };
     
-    
-
     const mapWeatherToGenres = (weatherData) => { // Function for mapping weather to genres
         // Map weather conditions to corresponding music genres
         const weatherCondition = weatherData.weather[0].main.toLowerCase();
@@ -379,17 +377,19 @@ function Home() {
                             {loggedIn && ( // Render only if logged in
                                 <h3>Cześć, {userName}!</h3>
                             )}
-                            <h2>Weather in {weatherData.name}</h2>
-                            <p>Condition: {weatherData.weather[0].main}</p>
-                            <p>Temperature: {Math.round(weatherData.main.temp)}°C</p>
-                            <p>Humidity: {weatherData.main.humidity}%</p>
+                            <h2>Pogoda dla miasta {weatherData.name}</h2>
+                            <p>Warunki Pogodowe: {weatherData.weather[0].main}</p>
+                            <p>Temperatura: {Math.round(weatherData.main.temp)}°C</p>
+                            <p>Wilgotność: {weatherData.main.humidity}%</p>
                         </div>
                     )}
                     <div className="container">
                     {loggedIn && !showButton && countdown !== null && ( // Check loggedIn and showButton states
                             <div>
-                                <p>You used up all of your refreshes. Please wait:</p>
-                                <p>{Math.floor(countdown / 60000)}:{(countdown % 60000 / 1000).toFixed(0).padStart(2, '0')}</p>
+                                <p>Wszystkie odświeżenia zostały wykorzystane.</p>
+                                {/* <p>You used up all of your refreshes. Please wait:</p> */}
+
+                                <p><b>Proszę poczekać: </b> {Math.floor(countdown / 60000)}:{(countdown % 60000 / 1000).toFixed(0).padStart(2, '0')}</p>
                             </div>
                         )}
                         {loggedIn && showButton && ( // Check both loggedIn and showButton states
@@ -400,18 +400,36 @@ function Home() {
                         {recommendedTracks.length > 0 && (
                             <div>
                                 <h3>Recommended Songs</h3>
+                                <div class="recommended-main">
                                 <ul>
                                     {recommendedTracks.map((track, index) => (
-                                        <li key={index}>{track.name} - {track.artists.map(artist => artist.name).join(', ')}</li>
+                                        <li key={index}>
+                                            <div>
+                                                {/* Render album image */}
+                                                <img src={track.album.images[0].url} alt="Album Cover" style={{ width: '50px', height: '50px' }} />
+                                            </div>
+                                            <div>
+                                                {/* Render track name and artists */}
+                                                <span style={{ fontWeight: 'bold' }}>{track.artists.map(artist => artist.name).join(', ')}</span> - {track.name}
+                                                {/* Check if track has preview URL and render audio player */}
+                                                {track.preview_url && (
+                                                    <audio controls>
+                                                        <source src={track.preview_url} type="audio/mpeg" />
+                                                        Your browser does not support the audio element.
+                                                    </audio>
+                                                )}
+                                            </div>
+                                        </li>
                                     ))}
                                 </ul>
+                                </div>
                                 <button onClick={savePlaylist}>Save Playlist</button>
                             </div>
                         )}
                     </div>
                 </div>
+                {/* <button onClick={() => Utils.saveAsImage('weather')}>Save Image</button> */}
 
-                <button className="theme-btn" onClick={toggleTheme}>Theme</button>
                 {loggedIn ? (
                     <button onClick={handleLogout}>Logout</button>
                 ) : (

@@ -4,8 +4,9 @@ import Header from './components/Header';
 import Home from './components/Home';
 import Profile from './components/Profile';
 import FindMusic from './components/FindMusic';
+import TierList from './components/TierList';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "./styles/styles.css";
+import './styles/styles.css';
 import './App.css';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
         <Route path="/" element={<Home toggleTheme={toggleTheme} />} />
         <Route path="FindMusic" element={<FindMusic toggleTheme={toggleTheme} />} />
         <Route path="profile" element={<Profile toggleTheme={toggleTheme} />} />
+        <Route path="TierList" element={<TierList toggleTheme={toggleTheme} />} />
       </Routes>
     </div>
   );
