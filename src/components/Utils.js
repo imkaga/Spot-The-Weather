@@ -1,4 +1,5 @@
 import { openWeatherApiKey, openWeatherApiUrl, spotifyClientId, spotifyClientSecret, spotifyRedirectUri } from './ApiKeys';
+import html2canvas from 'html2canvas';
 
 export const apiKey = openWeatherApiKey;
 export const clientId = spotifyClientId;
@@ -304,3 +305,17 @@ export const popularityValues = {
         throw error;
     }
 }
+
+export const saveAsImage = async (elementId) => {
+    const element = document.getElementById(elementId);
+    try {
+        const canvas = await html2canvas(element);
+        const image = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = 'weather_data.png';
+        link.href = image;
+        link.click();
+    } catch (error) {
+        console.error('Error saving image:', error);
+    }
+};

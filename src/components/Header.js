@@ -19,7 +19,7 @@ export default function Header({ toggleTheme }) {
                             <Link to="Profile">Profil</Link>
                         </li>
                         <li className="nav-item">
-                            <a href="./onas.html">Udostępnij</a>
+                            <Link to="TierList">Tier List</Link>
                         </li>
                     </ul>
                 </nav>

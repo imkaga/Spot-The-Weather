@@ -102,6 +102,7 @@ header{
     color: #ffffff;
     cursor: pointer;
     font-weight: bold;
+    width: 25%;
 }
 
 
@@ -137,9 +138,12 @@ header{
 }
 
 .numbered-list {
+    align-items: center;
     list-style: none; /* Remove default numbering */
     counter-reset: list-counter; /* Reset counter */
     text-align: left;
+    position: relative;
+    
 }
 
 .numbered-list li::before {
@@ -151,22 +155,86 @@ header{
     margin-top: 40px;
 }
 
+.recommended-main {
+    list-style: none; /* Remove default numbering */
+    counter-reset: none; /* Reset counter */
+    text-align: left; /* Align text to the left */
+    display: flex;
+    flex-wrap: wrap; /* Allow flex items to wrap */
+    justify-content: center; /* Center the content horizontally */
+    padding: 0; /* Remove default padding */
+    margin: 0; /* Remove default margin */
+}
+
+.recommended-main li {
+    text-align: left; /* Align text to the left */
+    list-style: none; /* Remove default numbering */
+    background-color: #2F8F51; /* Background color for each box */
+    color: #fff; 
+    border-radius: 10px; /* Border radius for rounded corners */
+    padding: 10px; /* Padding around each box */
+    margin: 10px; /* Margin between each box */
+    width: 400px; /* Set width of each box */
+    min-height: 120px;
+
+}
+
+.recommended-main li img {
+    max-width: 100%; /* Ensure the image fits within the box */
+    height: auto; /* Maintain aspect ratio */
+}
+
 .recommended {
     list-style: none; /* Remove default numbering */
     counter-reset: none; /* Reset counter */
     text-align: left; /* Align text to the left */
     display: flex;
-    flex-direction: column;
-    align-items: center; /* Center the list horizontally */
+    flex-wrap: wrap; /* Allow flex items to wrap */
+    justify-content: center; /* Center the content horizontally */
     padding: 0; /* Remove default padding */
+    margin: 0; /* Remove default margin */
 }
 
 .recommended li {
     text-align: left; /* Align text to the left */
+    list-style: none; /* Remove default numbering */
+    background-color: #1EBA55; /* Background color for each box */
+    color: #fff; /* Text color */
+    border-radius: 10px; /* Border radius for rounded corners */
+    padding: 10px; /* Padding around each box */
+    margin: 10px; /* Margin between each box */
+    width: 400px; /* Set width of each box */
+}
+
+.recommended li img {
+    max-width: 100%; /* Ensure the image fits within the box */
+    height: auto; /* Maintain aspect ratio */
+}
+
+audio {
+    align-items: center;
+    padding: 10px;
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+@media screen and (max-width: 1000px) {
+    .search button {
+        border-radius: 0 15px 15px 0;
+        border: none;
+        background-color: #2F8F51;
+        color: #ffffff;
+        cursor: pointer;
+        font-weight: bold;
+        width: 30%;
+        max-width: 250px;
+    }
+    
 }
 
 /* Media query for smaller screen sizes (e.g., mobile devices) */
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 740px) {
     .nav-item {
        /* width: calc(50% - 10px); /* Set width to 50% minus margin */
         margin-right: 10px; /* Remove margin between items */
@@ -190,6 +258,34 @@ header{
     header{
         margin-bottom: 15px;
     }
+
+    .search {
+        position: relative;
+        margin-top: 10px;
+        width: 50%; /* Adjust width for larger screens */
+        max-width: 200px; /* Limit maximum width */
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .search button {
+        border-radius: 0 15px 15px 0;
+        border: none;
+        background-color: #2F8F51;
+        color: #ffffff;
+        cursor: pointer;
+        font-weight: bold;
+        width: 50%;
+        max-width: 200px;
+    }
+
+    .search input[type="text"] {
+        border-radius: 15px 0 0 15px;
+        border: none;
+        width: 50%;
+    }
+
+
 }
 
 /* Media query for smaller screen sizes (e.g., mobile devices) */
