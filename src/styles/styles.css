@@ -175,8 +175,7 @@ header{
     padding: 10px; /* Padding around each box */
     margin: 10px; /* Margin between each box */
     width: 400px; /* Set width of each box */
-    min-height: 120px;
-
+    min-height: 140px;
 }
 
 .recommended-main li img {
@@ -212,6 +211,7 @@ header{
 }
 
 p.song-preview {
+    margin-top: 10px;
     color:#dedede85 ;
     font-style: italic;
     font-size: small;
@@ -219,7 +219,7 @@ p.song-preview {
 
 audio {
     align-items: center;
-    padding: 10px;
+    padding-top: 10px;
     position: relative;
     width: 100%;
     margin-bottom: 10px;

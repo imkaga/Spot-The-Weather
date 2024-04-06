@@ -414,12 +414,16 @@ function Home() {
                                                 {/* Render track name and artists */}
                                                 <span style={{ fontWeight: 'bold' }}>{track.artists.map(artist => artist.name).join(', ')}</span> - {track.name}
                                                 {/* Check if track has preview URL and render audio player */}
-                                                {track.preview_url && (
-                                                    <audio controls>
-                                                        <source src={track.preview_url} type="audio/mpeg" />
-                                                        Your browser does not support the audio element.
-                                                    </audio>
-                                                )}
+                                                {track.preview_url ? (
+                        // If preview_url is available, render the audio player
+                        <audio controls>
+                          <source src={track.preview_url} type="audio/mpeg" />
+                          Your browser does not support the audio element.
+                        </audio>
+                      ) : (
+                        // If preview_url is not available, display the message
+                        <p className="song-preview">Podgląd piosenki niedostępny</p>
+                      )}
                                             </div>
                                         </li>
                                     ))}
