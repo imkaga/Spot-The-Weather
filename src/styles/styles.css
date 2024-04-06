@@ -211,6 +211,12 @@ header{
     height: auto; /* Maintain aspect ratio */
 }
 
+p.song-preview {
+    color:#dedede85 ;
+    font-style: italic;
+    font-size: small;
+}
+
 audio {
     align-items: center;
     padding: 10px;
