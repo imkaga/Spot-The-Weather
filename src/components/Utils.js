@@ -319,3 +319,11 @@ export const saveAsImage = async (elementId) => {
         console.error('Error saving image:', error);
     }
 };
+
+export const loggedin = () => {
+    // Implementation for checking if user is logged in
+    const accessToken = localStorage.getItem('access_token');
+    return !!accessToken; // Returns true if accessToken is present
+  };
+
+  

@@ -1,26 +1,83 @@
-import React, { useState } from 'react';
-import { searchMusicRecommendations } from './Utils';
+import React, { useState, useEffect } from "react";
+import { searchMusicRecommendations, loggedin } from "./Utils";
+import * as Utils from "./Utils"; // Import functions from Utils.js
 
 const FindMusic = () => {
   // State declarations
-  const [selectedGenre, setSelectedGenre] = useState('');
-  const [tempo, setTempo] = useState('');
-  const [popularity, setPopularity] = useState({ min: 0, max: 100, target: 50 });
+  const [selectedGenre, setSelectedGenre] = useState("");
+  const [tempo, setTempo] = useState("");
+  const [popularity, setPopularity] = useState({
+    min: 0,
+    max: 100,
+    target: 50,
+  });
   const [limit, setLimit] = useState(10); // Initialize limit state
   const [recommendedTracks, setRecommendedTracks] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(false); // State for user login status
+  const [subgenres, setSubgenres] = useState([]); // State for subgenres
+  const [selectedSubgenre, setSelectedSubgenre] = useState(""); // State for selected subgenre
+
+  useEffect(() => {
+    setLoggedIn(loggedin()); // Check if user is logged in when component mounts
+  }, []);
+
+  const handleLogin = Utils.authenticate; // Function for handling login
 
   // Event handler functions
   const handleGenreChange = (event) => {
-    setSelectedGenre(event.target.value);
+    const selectedMainGenre = event.target.value;
+    setSelectedGenre(selectedMainGenre);
+  
+    // Format and set available subgenres based on selected main genre
+    const formattedSubgenres = (genreSubgenres[selectedMainGenre] || []).map(subgenre => formatSubgenre(subgenre));
+    setSubgenres(formattedSubgenres);
+  };
+
+  const formatSubgenre = (subgenre) => {
+    // Split the subgenre string by spaces and capitalize each word
+    return subgenre.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  };
+  
+
+  const handleSubgenreChange = (event) => {
+    const selectedSubgenre = event.target.value;
+    setSelectedSubgenre(selectedSubgenre);
   };
 
   const handleTempoChange = (event) => {
     setTempo(event.target.value);
   };
 
+  // Helper functions to get min and max tempo based on selected tempo option
+  const getMinTempo = (tempo) => {
+    switch (tempo) {
+      case "fast":
+        return 120;
+      case "slow":
+        return 60;
+      case "calm":
+        return 90;
+      default:
+        return 0;
+    }
+  };
+
+  const getMaxTempo = (tempo) => {
+    switch (tempo) {
+      case "fast":
+        return 180;
+      case "slow":
+        return 100;
+      case "calm":
+        return 120;
+      default:
+        return 200;
+    }
+  };
+
   const handlePopularityChange = (event) => {
     const selectedValue = event.target.value;
-    const [min, max] = selectedValue.split('-').map(Number);
+    const [min, max] = selectedValue.split("-").map(Number);
     setPopularity({ min, max });
   };
 
@@ -28,103 +85,209 @@ const FindMusic = () => {
     setLimit(parseInt(event.target.value)); // Parse the value to integer and update the limit state
   };
 
+  const genreSubgenres = {
+    pop: ["dance-pop", "synth-pop", "pop-film", "r-n-b"],
+    "hip-hop": ["rap", "trap", "Old School"],
+    rock: [
+      "hard-rock",
+      "punk",
+      "post-punk",
+      "new-wave",
+      "new-age",
+      "goth",
+      "emo",
+      "metal",
+      "heavy-metal",
+      "metalcore",
+      "alt-rock",
+      "black-metal",
+      "goth",
+    ],
+    indie: [
+      "dream-pop",
+      "indie-rock",
+      "indie-shoegaze",
+      "indietronica",
+      "indie-pop",
+    ],
+    jazz: ["Jazz Fusion", "Smooth Jazz"],
+    classical: ["opera", "piano", "baroque", "romantic"],
+    electronic: ["house", "techno", "trance", "dubstep", "dark-techno", "edm"],
+    disco: ["Disco Funk", "Nu-disco"],
+    "new-age": ["ambient", "shoegaze"],
+    folk: ["folk-rock", "sertanejo", "tango", "country"],
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!selectedGenre) {
-      alert('Proszę wybrać gatunek!');
+      alert("Proszę wybrać gatunek!");
       return; // Exit early if no genre is selected
     }
   
+    const genreToSearch = selectedSubgenre || selectedGenre; // Use subgenre if selected, otherwise use main genre
+  
     try {
-      const accessToken = localStorage.getItem('access_token');
-      const response = await searchMusicRecommendations(
-        accessToken,
-        selectedGenre,
-        tempo,
-        popularity, // Ensure that popularity object is passed here
-        limit
-      );
-      setRecommendedTracks(response.tracks);
+      const accessToken = localStorage.getItem("access_token");
+      if (!accessToken) {
+        console.error("Access token not found");
+        return;
+      }
+  
+      // Ensure that the genre name is lowercase for API compatibility
+      const lowercaseGenreToSearch = genreToSearch.toLowerCase();
+  
+      let apiUrl = `https://api.spotify.com/v1/recommendations?seed_genres=${encodeURIComponent(
+        lowercaseGenreToSearch
+      )}`;
+  
+      // Add tempo parameter if tempo is selected
+      if (tempo) {
+        apiUrl += `&min_tempo=${getMinTempo(tempo)}&max_tempo=${getMaxTempo(
+          tempo
+        )}`;
+      }
+  
+      apiUrl += `&min_popularity=${popularity.min}&max_popularity=${popularity.max}&limit=${limit}`;
+  
+      console.log("API URL:", apiUrl); // Log the constructed API URL to the console
+  
+      const response = await fetch(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(`API error! ${data.error.message}`);
+      }
+  
+      setRecommendedTracks(data.tracks);
     } catch (error) {
-      console.error('Error fetching recommended tracks:', error);
+      console.error("Error fetching recommended tracks:", error);
     }
   };
   
 
   return (
     <>
-      <h1>Find Music</h1>
-      <p>Ważne! Popularność muzyki nie jest określana przez ilość odsłuchań, a jak często była odsłuchiwana w ostatnim czasie. </p>
-      <br></br>
-      <div>
-        <form onSubmit={handleSubmit}>
-          <label>Select Genre:</label>
-          <select value={selectedGenre} onChange={handleGenreChange}>
-            <option value="">-</option>
-            <option value="pop">Pop</option>
-            <option value="hip-hop">Rap/Hip-Hop</option>
-            <option value="rock">Rock/Metal</option>
-            <option value="indie">Indie</option>
-            <option value="jazz">Jazz</option>
-            <option value="classical">Classical</option>
-            <option value="electronic">Electronic</option>
-            <option value="disco">Disco</option>
-            <option value="new-age">New Age</option>
-            <option value="folk">Folk</option>
-          </select>
+      {loggedIn ? (
+        <>
+        <div className="card">
+          <h1>Find Music</h1>
+          <p>
+            Ważne! Popularność muzyki nie jest określana przez ilość odsłuchań,
+            a jak często była odsłuchiwana w ostatnim czasie.{" "}
+          </p>
+          <br></br>
+          <div>
+            <form onSubmit={handleSubmit}>
+            <div class="form-container">
+              <label>Gatunek:</label>
+              <select value={selectedGenre} onChange={handleGenreChange}>
+                <option value="">-</option>
+                <option value="pop">Pop</option>
+                <option value="hip-hop">Rap/Hip-Hop</option>
+                <option value="rock">Rock/Metal</option>
+                <option value="indie">Indie</option>
+                <option value="jazz">Jazz</option>
+                <option value="classical">Classical</option>
+                <option value="electronic">Electronic</option>
+                <option value="disco">Disco</option>
+                <option value="new-age">New Age</option>
+                <option value="folk">Folk</option>
+              </select>
 
-          <label>Tempo:</label>
-          <select value={tempo} onChange={handleTempoChange}>
-            <option value="">-</option>
-            <option value="fast">Fast</option>
-            <option value="slow">Slow</option>
-            <option value="calm">Calm</option>
-          </select>
+              <label>Podgatunek:</label>
+              <select value={selectedSubgenre} onChange={handleSubgenreChange}>
+                <option value="">-</option>
+                {subgenres.map((subgenre, index) => (
+                  <option key={index} value={subgenre}>
+                    {subgenre}
+                  </option>
+                ))}
+              </select>
 
-          <label>Popularity:</label>
-          <select value={`${popularity.min}-${popularity.max}`} onChange={handlePopularityChange}>
-            <option value="">-</option>
-            <option value="0-5">Underground</option>
-            <option value="6-15">Niche</option>
-            <option value="16-40">Somewhat Known</option>
-            <option value="41-70">Popular</option>
-            <option value="71-100">Very Popular</option>
-          </select>
 
-          <label>Number of Songs:</label>
-          <select value={limit} onChange={handleLimitChange}>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="30">30</option>
-          </select>
+              <label>Tempo:</label>
+              <select value={tempo} onChange={handleTempoChange}>
+                <option value="">-</option>
+                <option value="fast">Szybkie</option>
+                <option value="slow">Wolne</option>
+                <option value="calm">Spokojne</option>
+              </select>
 
-          <button type="submit">Recommend Songs</button>
-        </form>
-      </div>
+              <label>Popularność:</label>
+              <select
+                value={`${popularity.min}-${popularity.max}`}
+                onChange={handlePopularityChange}
+              >
+                <option value="">-</option>
+                <option value="0-15">Mało popularne</option>
+                <option value="16-40">Znane</option>
+                <option value="41-70">Popularne</option>
+                <option value="71-100">Bardzo Popularne</option>
+              </select>
 
-      <div>
-        <h3>Recommended Songs</h3>
-        <div class="recommended">
-        <ul>
-          {recommendedTracks.map((track, index) => (
-            <li key={index}>
-              <div>
-                <img src={track.album.images[0].url} alt="Album Cover" style={{ width: '50px', height: '50px' }} />
-              </div>
-              <div>
-              <span style={{ fontWeight: 'bold' }}>{track.artists.map(artist => artist.name).join(', ')}</span> - {track.name}
-                {track.preview_url && (
-                  <audio controls>
-                    <source src={track.preview_url} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                  </audio>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-        </div>
-      </div>
+              <label>Ilość piosenek:</label>
+              <select value={limit} onChange={handleLimitChange}>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+              </select>
+            </div>
+              <button type="submit">Recommend Songs</button>
+            </form>
+          </div>
+
+          <div>
+            <h3>Recommended Songs</h3>
+            <div className="recommended-main">
+              <ul>
+                {recommendedTracks.map((track, index) => (
+                  <li key={index}>
+                    <div>
+                      <img
+                        src={track.album.images[0].url}
+                        alt="Album Cover"
+                        style={{ width: "50px", height: "50px" }}
+                      />
+                    </div>
+                    <div>
+                      <span style={{ fontWeight: "bold" }}>
+                        {track.artists.map((artist) => artist.name).join(", ")}
+                      </span>{" "}
+                      - {track.name}
+                      {/* Check if track.preview_url exists */}
+                      {track.preview_url ? (
+                        // If preview_url is available, render the audio player
+                        <audio controls>
+                          <source src={track.preview_url} type="audio/mpeg" />
+                          Your browser does not support the audio element.
+                        </audio>
+                      ) : (
+                        // If preview_url is not available, display the message
+                        <p className="song-preview">Podgląd piosenki niedostępny</p>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <h3>Żeby wyświetlić zaawartość tej strony - Zaloguj Się!</h3>
+          <button onClick={handleLogin}>Login with Spotify</button>
+        </>
+      )}
     </>
   );
 };

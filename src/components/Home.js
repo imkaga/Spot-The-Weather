@@ -280,7 +280,9 @@ function Home() {
             case 'rain':
                 return 'chill'; // Example genre for rainy weather
             case 'clouds':
-                return 'indie'; // Example genre for cloudy weather
+                return 'rock'; // Example genre for cloudy weather
+            case 'thunder':
+                return
             // Add more cases for other weather conditions as needed
             default:
                 return 'pop'; // Default genre if weather condition doesn't match any specific genre
