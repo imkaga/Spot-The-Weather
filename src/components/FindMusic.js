@@ -85,23 +85,31 @@ const FindMusic = () => {
     setLimit(parseInt(event.target.value)); // Parse the value to integer and update the limit state
   };
 
+  // Lista gatunków
   const genreSubgenres = {
-    pop: ["dance-pop", "synth-pop", "pop-film", "r-n-b"],
-    "hip-hop": ["rap", "trap", "Old School"],
+    pop: [
+      "dance-pop",
+      "synth-pop",
+      "pop-film",
+      "r-n-b"
+    ],
+    "hip-hop": [
+      "rap",
+      "trap",
+    ],
     rock: [
-      "hard-rock",
-      "punk",
-      "post-punk",
-      "new-wave",
-      "new-age",
-      "goth",
-      "emo",
-      "metal",
-      "heavy-metal",
-      "metalcore",
       "alt-rock",
       "black-metal",
+      "emo",
       "goth",
+      "hard-rock",
+      "heavy-metal",
+      "new-age",
+      "new-wave",
+      "metal",
+      "metalcore",
+      "punk",
+      "post-punk",
     ],
     indie: [
       "dream-pop",
@@ -110,12 +118,33 @@ const FindMusic = () => {
       "indietronica",
       "indie-pop",
     ],
-    jazz: ["Jazz Fusion", "Smooth Jazz"],
-    classical: ["opera", "piano", "baroque", "romantic"],
-    electronic: ["house", "techno", "trance", "dubstep", "dark-techno", "edm"],
-    disco: ["Disco Funk", "Nu-disco"],
-    "new-age": ["ambient", "shoegaze"],
-    folk: ["folk-rock", "sertanejo", "tango", "country"],
+    jazz: [], // Brak podgatunków do dopasowania
+    classical: [
+      "opera",
+      "piano",
+      "baroque",
+      "romantic"
+    ],
+    electronic: [
+      "dubstep",
+      "edm",
+      "house",
+      "techno",
+      "trance",
+    ],
+    disco: [
+      "funk",
+      "nu-disco"
+    ],
+    "new-age": [ // Prawdopodobnie do wyjebania
+      "ambient",
+    ],
+    folk: [
+      "folk-rock",
+      "sertanejo",
+      "tango",
+      "country"
+    ],
   };
 
   const handleSubmit = async (event) => {
