@@ -1,82 +1,77 @@
+// src/TierList.js
 import React, { useState } from 'react';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import Tier from './Tier';
 import '../styles/TierList.css';
 
-const ItemTypes = {
-  BOX: 'box',
-};
-
-const Box = ({ name, moveBox }) => {
-  const [{ isDragging }, drag] = useDrag({
-    item: { name, type: ItemTypes.BOX },
-    end: (item, monitor) => {
-      const dropResult = monitor.getDropResult();
-      if (item && dropResult) {
-        moveBox(item.name, dropResult.name);
-      }
-    },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  });
-
-  return (
-    <div ref={drag} className={`box ${isDragging ? 'dragging' : ''}`}>
-      {name}
-    </div>
-  );
-};
-
-const Tier = ({ name, boxes, moveBox }) => {
-  const [{ isOver }, drop] = useDrop({
-    accept: ItemTypes.BOX,
-    drop: () => ({ name }),
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-    }),
-  });
-
-  return (
-    <div ref={drop} className={`tier ${isOver ? 'hovered' : ''}`}>
-      <h2>{name}</h2>
-      {boxes.map((box) => (
-        <Box key={box} name={box} moveBox={moveBox} />
-      ))}
-    </div>
-  );
-};
-
 const TierList = () => {
-  const [boxes, setBoxes] = useState([
-    { name: 'Box 1', tier: 'S' },
-    { name: 'Box 2', tier: 'A' },
-    { name: 'Box 3', tier: 'B' },
-    { name: 'Box 4', tier: 'C' },
-    { name: 'Box 5', tier: 'D' },
-    { name: 'Box 6', tier: 'F' },
-  ]);
+  // Define tiers and items
+  const tiers = ['S', 'A', 'B', 'C', 'D'];
+  const items = ['Item 1', 'Item 2', 'Item 3', 'TEST']; // Define your items here
 
-  const moveBox = (boxName, newTier) => {
-    const updatedBoxes = boxes.map((box) => {
-      if (box.name === boxName) {
-        return { ...box, tier: newTier };
-      }
-      return box;
-    });
-    setBoxes(updatedBoxes);
+  // State to track dropped items in each tier
+  const [droppedItems, setDroppedItems] = useState({});
+
+  // Handle drop event for each tier
+  const handleDrop = (tier) => (itemId) => {
+    setDroppedItems((prevItems) => ({
+      ...prevItems,
+      [tier]: [...(prevItems[tier] || []), itemId],
+    }));
   };
 
+  // Handle removing a dropped item from a tier
+  const handleClearDrop = (tier, itemId) => {
+    setDroppedItems((prevItems) => ({
+      ...prevItems,
+      [tier]: prevItems[tier].filter((id) => id !== itemId),
+    }));
+  };
+
+  // Render the tier list, draggable items, and dropped items
   return (
-    <div className="tier-list">
-      <DndProvider backend={HTML5Backend}>
-        <Tier name="S" boxes={boxes.filter((box) => box.tier === 'S')} moveBox={moveBox} />
-        <Tier name="A" boxes={boxes.filter((box) => box.tier === 'A')} moveBox={moveBox} />
-        <Tier name="B" boxes={boxes.filter((box) => box.tier === 'B')} moveBox={moveBox} />
-        <Tier name="C" boxes={boxes.filter((box) => box.tier === 'C')} moveBox={moveBox} />
-        <Tier name="D" boxes={boxes.filter((box) => box.tier === 'D')} moveBox={moveBox} />
-        <Tier name="F" boxes={boxes.filter((box) => box.tier === 'F')} moveBox={moveBox} />
-      </DndProvider>
+    <div className="tier-list-container">
+      <h1>Tier List</h1>
+
+      {/* Render tier boxes */}
+      <div className="tier-list">
+        {tiers.map((tier) => (
+          <div key={tier} className="tier-container">
+            <Tier tier={tier} onDrop={handleDrop(tier)} />
+          </div>
+        ))}
+      </div>
+
+      {/* Render draggable items */}
+      <div className="items-container">
+        {items.map((item) => (
+          <div
+            key={item}
+            className="item"
+            draggable
+            onDragStart={(e) => e.dataTransfer.setData('text/plain', item)}
+          >
+            {item}
+          </div>
+        ))}
+      </div>
+
+      {/* Render tier tables with dropped items */}
+      <div className="tier-tables">
+        {tiers.map((tier) => (
+          <div key={tier} className="tier-table">
+            <h2>{tier}</h2>
+            <ul className="dropped-items">
+              {/* Map over dropped items in each tier */}
+              {droppedItems[tier]?.map((itemId) => (
+                <li key={itemId}>
+                  {itemId}
+                  <button onClick={() => handleClearDrop(tier, itemId)}>Remove</button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

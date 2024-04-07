@@ -145,6 +145,11 @@ const FindMusic = () => {
       "tango",
       "country"
     ],
+    inne: [
+      "anime",
+      "blues",
+      
+    ],
   };
 
   const handleSubmit = async (event) => {
@@ -230,6 +235,7 @@ const FindMusic = () => {
                 <option value="disco">Disco</option>
                 <option value="new-age">New Age</option>
                 <option value="folk">Folk</option>
+                <option value="inne">Inne</option>
               </select>
 
               <label>Podgatunek:</label>
