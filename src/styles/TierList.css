@@ -1,38 +1,84 @@
-/* TierList.css */
+/* src/TierList.css */
+
+.tier-list-container {
+  text-align: center;
+  margin-top: 50px;
+}
 
 .tier-list {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-  }
-  
-  .tier {
-    width: 120px;
-    padding: 10px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .tier h2 {
-    margin: 0;
-    text-align: center;
-  }
-  
-  .box {
-    margin-bottom: 5px;
-    padding: 8px;
-    background-color: #f0f0f0;
-    border: 1px solid #aaa;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  
-  .box.dragging {
-    opacity: 0.5;
-  }
-  
-  .tier.hovered {
-    border-color: blue;
-  }
-  
-  
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.tier-container {
+  width: 150px;
+  margin-bottom: 20px;
+}
+
+.tier {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.tier h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.drop-zone {
+  border: 1px dashed #aaa;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.items-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 40px;
+}
+
+.item {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.tier-tables {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 40px;
+}
+
+.tier-table {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  width: 150px;
+}
+
+.tier-table h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.dropped-items {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.dropped-items li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.dropped-items button {
+  padding: 6px 12px;
+  cursor: pointer;
+}

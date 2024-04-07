@@ -19,7 +19,7 @@ export default function Header({ toggleTheme }) {
                             <Link to="Profile">Profil</Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="TierList">Tier List</Link>
+                            <Link to="TierListPage">Tier List</Link>
                         </li>
                     </ul>
                 </nav>
