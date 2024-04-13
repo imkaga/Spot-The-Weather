@@ -13,15 +13,48 @@ const FindMusic = () => {
   });
   const [limit, setLimit] = useState(10); // Initialize limit state
   const [recommendedTracks, setRecommendedTracks] = useState([]);
+  const [playlistId, setPlaylistId] = useState(""); // State to store the playlist ID
   const [loggedIn, setLoggedIn] = useState(false); // State for user login status
   const [subgenres, setSubgenres] = useState([]); // State for subgenres
   const [selectedSubgenre, setSelectedSubgenre] = useState(""); // State for selected subgenre
 
   useEffect(() => {
     setLoggedIn(loggedin()); // Check if user is logged in when component mounts
+    setPlaylistId("YOUR_PLAYLIST_ID_HERE");
   }, []);
 
   const handleLogin = Utils.authenticate; // Function for handling login
+
+  const handleAddToPlaylist = async () => {
+    try {
+      const accessToken = localStorage.getItem("access_token");
+      if (!accessToken) {
+        console.error("Access token not found");
+        return;
+      }
+
+      const trackUris = recommendedTracks.map((track) => track.uri);
+      const apiUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uris: trackUris }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      // If successful, notify the user or perform any necessary actions
+      console.log("Tracks added to playlist successfully!");
+    } catch (error) {
+      console.error("Error adding tracks to playlist:", error);
+    }
+  };
 
   // Event handler functions
   const handleGenreChange = (event) => {
@@ -298,6 +331,12 @@ const FindMusic = () => {
                         {track.artists.map((artist) => artist.name).join(", ")}
                       </span>{" "}
                       - {track.name}
+                      {/* Add button to add recommended tracks to playlist */}
+      {recommendedTracks.length > 0 && (
+        <button onClick={handleAddToPlaylist}>
+          Add Songs to Playlist "Spot The Weather - Wyszukiwarka"
+        </button>
+      )}
                       {/* Check if track.preview_url exists */}
                       {track.preview_url ? (
                         // If preview_url is available, render the audio player
