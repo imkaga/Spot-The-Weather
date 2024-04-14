@@ -287,7 +287,7 @@ const handleAddToPlaylist = async (trackUri) => {
     inne: [
       "anime",
       "blues",
-      
+      "bajo jajo"
     ],
   };
 
