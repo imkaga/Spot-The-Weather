@@ -326,4 +326,20 @@ export const loggedin = () => {
     return !!accessToken; // Returns true if accessToken is present
   };
 
+
+
+// Function to play an audio preview
+export const playPreview = (previewUrl, setCurrentPreview) => {
+    const audio = new Audio(previewUrl);
+    audio.play();
+    setCurrentPreview(audio); // Set the current audio element
+    return audio; // Return the audio element for further control
+  };
+  
+  // Function to pause the currently playing audio preview
+  export const pausePreview = (currentPreview) => {
+    if (currentPreview instanceof Audio) {
+      currentPreview.pause();
+    }
+  };
   
