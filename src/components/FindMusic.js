@@ -17,44 +17,150 @@ const FindMusic = () => {
   const [loggedIn, setLoggedIn] = useState(false); // State for user login status
   const [subgenres, setSubgenres] = useState([]); // State for subgenres
   const [selectedSubgenre, setSelectedSubgenre] = useState(""); // State for selected subgenre
+  const [userId, setUserId] = useState(''); // State for storing user's Spotify user ID
+  const [userName, setUserName] = useState(''); // State for storing user's name  
 
   useEffect(() => {
     setLoggedIn(loggedin()); // Check if user is logged in when component mounts
     setPlaylistId("YOUR_PLAYLIST_ID_HERE");
   }, []);
 
+  useEffect(() => {
+    Utils.handleAuthorizationCode()
+      .then(() => {
+        const accessToken = localStorage.getItem('access_token');
+        if (accessToken) {
+          Utils.getProfile(accessToken)
+            .then(data => {
+              if (data) {
+                setUserName(data.display_name); // Setting user's name
+                setUserId(data.id); // Set the user's Spotify user ID
+              }
+            })
+            .catch(error => {
+              console.error('Error fetching user profile:', error);
+            });
+        } else {
+          console.error('Access token not found');
+        }
+      })
+      .catch(error => {
+        console.error('Error handling authorization code:', error);
+      });
+  }, []);
+  
+
   const handleLogin = Utils.authenticate; // Function for handling login
 
-  const handleAddToPlaylist = async () => {
+  const findOrCreatePlaylist = async (accessToken, userId) => {
     try {
-      const accessToken = localStorage.getItem("access_token");
-      if (!accessToken) {
-        console.error("Access token not found");
-        return;
+      const playlistName = "Spot The Weather - Wyszukiwarka";
+  
+      // Check if the playlist already exists for the user
+      const existingPlaylistId = await getPlaylistId(accessToken, userId, playlistName);
+  
+      if (existingPlaylistId) {
+        // Playlist already exists, return the existing playlist ID
+        return existingPlaylistId;
+      } else {
+        // Playlist doesn't exist, create a new playlist
+        const playlistResponse = await createPlaylist(accessToken, userId, playlistName);
+        return playlistResponse.id;
       }
-
-      const trackUris = recommendedTracks.map((track) => track.uri);
-      const apiUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
-
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ uris: trackUris }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      // If successful, notify the user or perform any necessary actions
-      console.log("Tracks added to playlist successfully!");
     } catch (error) {
-      console.error("Error adding tracks to playlist:", error);
+      console.error("Error finding or creating playlist:", error);
+      throw error; // Propagate the error for handling upstream
     }
   };
+  
+  const getPlaylistId = async (accessToken, userId, playlistName) => {
+    try {
+      const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to fetch playlists! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+  
+      // Find the playlist by name (case-insensitive match)
+      const existingPlaylist = data.items.find(
+        (playlist) =>
+          playlist.name.toLowerCase() === playlistName.toLowerCase() && playlist.owner.id === userId
+      );
+  
+      return existingPlaylist ? existingPlaylist.id : null;
+    } catch (error) {
+      console.error("Error getting playlist ID:", error);
+      throw error; // Propagate the error for handling upstream
+    }
+  };
+
+  const createPlaylist = async (accessToken, userId, playlistName) => {
+  try {
+    const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: playlistName,
+        public: true,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to create playlist! Status: " + response.status);
+    }
+
+    const playlistData = await response.json();
+    return playlistData;
+  } catch (error) {
+    console.error("Error creating playlist:", error);
+    throw error; // Propagate the error for handling upstream
+  }
+};
+
+const handleAddToPlaylist = async (trackUri) => {
+  try {
+    const accessToken = localStorage.getItem("access_token");
+    if (!accessToken) {
+      console.error("Access token not found");
+      return;
+    }
+
+    const apiUrl = `https://api.spotify.com/v1/users/${userId}/playlists`;
+    const playlistId = await findOrCreatePlaylist(accessToken, userId);
+
+    // Filter recommendedTracks to include only track URIs
+    const trackUris = recommendedTracks.map((track) => track.uri);
+
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ uris: [trackUri] }), // Pass only the selected track URI
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    console.log("Track added to playlist successfully!");
+  } catch (error) {
+    console.error("Error adding track to playlist:", error);
+  }
+};
+
 
   // Event handler functions
   const handleGenreChange = (event) => {
