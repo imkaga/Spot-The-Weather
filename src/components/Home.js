@@ -16,6 +16,9 @@ function Home() {
     const [showButton, setShowButton] = useState(true); // State for showing or hiding the refresh button
     const [lastActivityTime, setLastActivityTime] = useState(Date.now()); // State for tracking user activity
     const [sessionExpired, setSessionExpired] = useState(false); // State for session expiration popup // W RAZIE CZEGO DO WYRZUCENIA
+    const [currentPreview, setCurrentPreview] = useState(null); // State to track current audio preview
+    const [playingTrack, setPlayingTrack] = useState(null); // State to track the currently playing track
+    const [isPlaying, setIsPlaying] = useState(false);
     
 
     const handleLogin = Utils.authenticate; // Function for handling login
@@ -197,9 +200,17 @@ function Home() {
         }
     }, []);
     
-    
-    
-
+    useEffect(() => {
+        return () => {
+          if (currentPreview) {
+            Utils.pausePreview(currentPreview); // Pause the audio preview
+            setCurrentPreview(null); // Reset current audio preview
+            setPlayingTrack(null); // Reset playing track
+            setIsPlaying(false); // Reset playing state
+          }
+        };
+      }, []);
+      
     useEffect(() => { // Effect for updating countdown timer
         if (countdown !== null) {
             const timer = setInterval(() => {
@@ -333,6 +344,23 @@ function Home() {
         return response.json();
     };
 
+    const handlePreviewPlay = (previewUrl, track) => {
+        if (currentPreview) {
+          Utils.pausePreview(currentPreview);
+        }
+      
+        const audio = Utils.playPreview(previewUrl, setCurrentPreview);
+        setPlayingTrack(track);
+        setIsPlaying(true); // Set playing state to true when starting playback
+      };
+      
+      const handlePause = () => {
+        if (currentPreview) {
+          Utils.pausePreview(currentPreview);
+          setIsPlaying(false); // Update playing state to false when pausing
+        }
+      };
+
     const addTracksToPlaylist = async (accessToken, userId, playlistId, trackUris) => { // Function for adding tracks to playlist
         const url = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`;
         const response = await fetch(url, {
@@ -364,7 +392,7 @@ function Home() {
                             onChange={handleChange}
                             onKeyDown={handleKeyDown} // Enables search by hitting enter
                         />
-                        <button onClick={handleSearch}>Search</button>
+                        <button onClick={handleSearch}>Szukaj</button>
                     </div>
 
                     {errorMessage && <div className="error"><p>{errorMessage}</p></div>}
@@ -402,6 +430,7 @@ function Home() {
                         {recommendedTracks.length > 0 && (
                             <div>
                                 <h3>Recommended Songs</h3>
+                                <button onClick={savePlaylist}>Save Playlist</button>
                                 <div class="recommended-main">
                                 <ul>
                                     {recommendedTracks.map((track, index) => (
@@ -414,22 +443,25 @@ function Home() {
                                                 {/* Render track name and artists */}
                                                 <span style={{ fontWeight: 'bold' }}>{track.artists.map(artist => artist.name).join(', ')}</span> - {track.name}
                                                 {/* Check if track has preview URL and render audio player */}
+                                                <br></br>
                                                 {track.preview_url ? (
-                        // If preview_url is available, render the audio player
-                        <audio controls>
-                          <source src={track.preview_url} type="audio/mpeg" />
-                          Your browser does not support the audio element.
-                        </audio>
-                      ) : (
-                        // If preview_url is not available, display the message
-                        <p className="song-preview">Podgląd piosenki niedostępny</p>
-                      )}
+                                                <>
+                                                    {playingTrack === track && isPlaying ? (
+                                                    <button onClick={handlePause}>Pause</button>
+                                                    ) : (
+                                                    <button onClick={() => handlePreviewPlay(track.preview_url, track)}>
+                                                        Play
+                                                    </button>
+                                                    )}
+                                                </>
+                                                ) : (
+                                                <p className="song-preview">Preview not available</p>
+                                                )}
                                             </div>
                                         </li>
                                     ))}
                                 </ul>
                                 </div>
-                                <button onClick={savePlaylist}>Save Playlist</button>
                             </div>
                         )}
                     </div>
