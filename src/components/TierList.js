@@ -1,17 +1,13 @@
-// src/TierList.js
 import React, { useState } from 'react';
 import Tier from './Tier';
 import '../styles/TierList.css';
 
 const TierList = () => {
-  // Define tiers and items
   const tiers = ['S', 'A', 'B', 'C', 'D'];
-  const items = ['Item 1', 'Item 2', 'Item 3', 'TEST']; // Define your items here
+  const items = ['Item 1', 'Item 2', 'Item 3', 'TEST'];
 
-  // State to track dropped items in each tier
   const [droppedItems, setDroppedItems] = useState({});
 
-  // Handle drop event for each tier
   const handleDrop = (tier) => (itemId) => {
     setDroppedItems((prevItems) => ({
       ...prevItems,
@@ -19,7 +15,6 @@ const TierList = () => {
     }));
   };
 
-  // Handle removing a dropped item from a tier
   const handleClearDrop = (tier, itemId) => {
     setDroppedItems((prevItems) => ({
       ...prevItems,
@@ -27,15 +22,28 @@ const TierList = () => {
     }));
   };
 
-  // Render the tier list, draggable items, and dropped items
   return (
     <div className="tier-list-container">
       <h1>Tier List</h1>
 
-      {/* Render tier boxes */}
       <div className="tier-list">
+        {/* Render tier pairs (e.g., S S, A A, B B, C C, D D) */}
         {tiers.map((tier) => (
-          <div key={tier} className="tier-container">
+          <div key={tier} className="tier-pair">
+            <div className="tier">
+              <h2>{tier}</h2>
+              {/* Render dropped items for the current tier */}
+              <ul className="dropped-items">
+                {droppedItems[tier]?.map((itemId) => (
+                  <li key={itemId}>
+                    {itemId}
+                    <button onClick={() => handleClearDrop(tier, itemId)}>Remove</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Render Tier component */}
             <Tier tier={tier} onDrop={handleDrop(tier)} />
           </div>
         ))}
@@ -51,24 +59,6 @@ const TierList = () => {
             onDragStart={(e) => e.dataTransfer.setData('text/plain', item)}
           >
             {item}
-          </div>
-        ))}
-      </div>
-
-      {/* Render tier tables with dropped items */}
-      <div className="tier-tables">
-        {tiers.map((tier) => (
-          <div key={tier} className="tier-table">
-            <h2>{tier}</h2>
-            <ul className="dropped-items">
-              {/* Map over dropped items in each tier */}
-              {droppedItems[tier]?.map((itemId) => (
-                <li key={itemId}>
-                  {itemId}
-                  <button onClick={() => handleClearDrop(tier, itemId)}>Remove</button>
-                </li>
-              ))}
-            </ul>
           </div>
         ))}
       </div>

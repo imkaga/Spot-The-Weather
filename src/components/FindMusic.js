@@ -279,10 +279,6 @@ const FindMusic = () => {
         <>
         <div className="card">
           <h1>Find Music</h1>
-          <p>
-            Ważne! Popularność muzyki nie jest określana przez ilość odsłuchań,
-            a jak często była odsłuchiwana w ostatnim czasie.{" "}
-          </p>
           <br></br>
           <div>
             <form onSubmit={handleSubmit}>
@@ -346,7 +342,7 @@ const FindMusic = () => {
           </div>
 
           <div>
-            <h3>Recommended Songs</h3>
+            {/* <h3>Wyniki twojego wyszukiwania</h3> */}
             <div className="recommended-main">
               <ul>
               {recommendedTracks.map((track, index) => (

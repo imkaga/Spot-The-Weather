@@ -225,6 +225,16 @@ audio {
     margin-bottom: 10px;
 }
 
+.login {
+    text-decoration: none;
+    background-color: #1DB954;
+    color: #fff;
+    font-weight: bolder;
+    padding: 10px;
+    border-radius: 10px;
+    text-decoration: none;
+}
+
 @media screen and (max-width: 1000px) {
     .search button {
         border-radius: 0 15px 15px 0;

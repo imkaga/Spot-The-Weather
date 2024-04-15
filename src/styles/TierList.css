@@ -8,59 +8,34 @@
 .tier-list {
   display: flex;
   justify-content: space-around;
+  align-items: flex-start;
+  flex-wrap: wrap; /* Allow tiers to wrap to the next line */
   margin-top: 20px;
 }
 
-.tier-container {
-  width: 150px;
+.tier-pair {
+  display: flex;
+  align-items: flex-start; /* Align items at the top of each tier pair */
   margin-bottom: 20px;
 }
 
 .tier {
+  width: 150px; /* Adjust width of each tier */
   border: 2px solid #ddd;
   border-radius: 8px;
   padding: 20px;
+  margin-right: 20px; /* Add spacing between tier pairs */
+}
+
+.tier-name {
+  width: 150px; /* Adjust width of each tier */
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-right: 20px; /* Add spacing between tier pairs */
 }
 
 .tier h2 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-}
-
-.drop-zone {
-  border: 1px dashed #aaa;
-  padding: 10px;
-  margin-top: 20px;
-}
-
-.items-container {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 40px;
-}
-
-.item {
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-
-.tier-tables {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 40px;
-}
-
-.tier-table {
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  padding: 20px;
-  width: 150px;
-}
-
-.tier-table h2 {
   font-size: 1.5rem;
   margin-bottom: 10px;
 }
@@ -80,5 +55,19 @@
 
 .dropped-items button {
   padding: 6px 12px;
+  cursor: pointer;
+}
+
+.items-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 40px;
+}
+
+.item {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
   cursor: pointer;
 }

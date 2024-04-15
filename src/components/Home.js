@@ -429,8 +429,8 @@ function Home() {
                         )}
                         {recommendedTracks.length > 0 && (
                             <div>
-                                <h3>Recommended Songs</h3>
-                                <button onClick={savePlaylist}>Save Playlist</button>
+                                <h3>Rekomendowane piosenki:</h3>
+                                <button onClick={savePlaylist}>Zapisz Playlistę</button>
                                 <div class="recommended-main">
                                 <ul>
                                     {recommendedTracks.map((track, index) => (
@@ -471,7 +471,7 @@ function Home() {
                 {loggedIn ? (
                     <button onClick={handleLogout}>Logout</button>
                 ) : (
-                    <button onClick={handleLogin}>Login with Spotify</button>
+                    <button class="login" onClick={handleLogin}>Zaloguj się ze Spotify</button>
                 )}
             </div>
         </>
