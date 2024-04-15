@@ -1,8 +1,15 @@
-/* src/TierList.css */
-
 .tier-list-container {
   text-align: center;
   margin-top: 50px;
+  background-color: gray;
+  margin: 50px;
+  border-radius: 15px;
+}
+
+.tier-pair {
+  align-items: flex-start; /* Align items at the top of each tier pair */
+  display: flex;
+  margin-bottom: 20px;
 }
 
 .tier-list {
@@ -13,26 +20,29 @@
   margin-top: 20px;
 }
 
-.tier-pair {
-  display: flex;
-  align-items: flex-start; /* Align items at the top of each tier pair */
-  margin-bottom: 20px;
-}
-
 .tier {
-  width: 150px; /* Adjust width of each tier */
+  width: 800px; /* Adjust width of each tier */
+  height: 100px;
   border: 2px solid #ddd;
-  border-radius: 8px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
   padding: 20px;
   margin-right: 20px; /* Add spacing between tier pairs */
+  background-color:rgb(50, 50, 50); /* Kolor, zeby wiedziec o co chodzi xD */
 }
 
 .tier-name {
-  width: 150px; /* Adjust width of each tier */
+  width: 100px; /* Adjust width of each tier */
+  height: 100px;
   border: 2px solid #ddd;
-  border-radius: 8px;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
   padding: 20px;
-  margin-right: 20px; /* Add spacing between tier pairs */
+  font-weight:bolder;
+  color: black;
+  display: flex;
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
 }
 
 .tier h2 {
@@ -48,9 +58,12 @@
 
 .dropped-items li {
   display: flex;
+  list-style: none;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  width: 90px;
+  height: 90px;
 }
 
 .dropped-items button {
@@ -62,12 +75,38 @@
   display: flex;
   justify-content: space-around;
   margin-top: 40px;
+  text-decoration: none;
 }
 
 .item {
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 10px;
-  cursor: pointer;
+  width: 90px; /* Set width of dragged item */
+  height: 90px; /* Set height of dragged item */
+  border: 2px solid #ddd; /* Border styling */
+  border-radius: 8px; /* Border radius for rounded corners */
+  padding: 10px; /* Padding inside the box */
+  margin-bottom: 10px; /* Spacing between items */
+  cursor: pointer; /* Change cursor on hover */
+  list-style: none; /* Remove list-style */
+}
+
+
+/* Define tier-specific colors */
+.tier-s {
+  background-color: red; /* S tier color */
+}
+
+.tier-a {
+  background-color: orange; /* A tier color */
+}
+
+.tier-b {
+  background-color: yellow; /* B tier color */
+}
+
+.tier-c {
+  background-color: greenyellow; /* C tier color */
+}
+
+.tier-d {
+  background-color: aqua; /* D tier color */
 }
