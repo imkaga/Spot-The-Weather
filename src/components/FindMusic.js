@@ -71,7 +71,6 @@ const FindMusic = () => {
     return subgenre.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   };
   
-
   const handleSubgenreChange = (event) => {
     const selectedSubgenre = event.target.value;
     setSelectedSubgenre(selectedSubgenre);
@@ -135,9 +134,6 @@ const FindMusic = () => {
     }
   };
   
-  
-  
-
   // Lista gatunków
   const genreSubgenres = {
     pop: [
@@ -216,7 +212,6 @@ const FindMusic = () => {
   };
 }, []);
 
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!selectedGenre) {
@@ -271,7 +266,6 @@ const FindMusic = () => {
       console.error("Error fetching recommended tracks:", error);
     }
   };
-  
 
   return (
     <>
