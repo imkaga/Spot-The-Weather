@@ -436,7 +436,7 @@ function Home() {
                             <div>
                                 <h3>Rekomendowane piosenki:</h3>
                                 <button onClick={savePlaylist}>Zapisz Playlistę</button>
-                                <div class="recommended-main">
+                                <div className="recommended-main">
                                 <ul>
                                     {recommendedTracks.map((track, index) => (
                                         <li key={index}>
@@ -475,7 +475,7 @@ function Home() {
                 {loggedIn ? (
                     <button onClick={handleLogout}>Logout</button>
                 ) : (
-                    <button class="login" onClick={handleLogin}>Zaloguj się ze Spotify</button>
+                    <button className="login" onClick={handleLogin}>Zaloguj się ze Spotify</button>
                 )}
             </div>
         </>
