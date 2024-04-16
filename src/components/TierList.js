@@ -1,48 +1,146 @@
-import React, { useState } from 'react';
-import '../styles/TierList.css';
+import React, { useState, useEffect } from 'react';
+import { getTopArtists, getRandomArtists, loggedin } from './Utils'; // Import necessary functions from utils.js
 
 const TierList = () => {
   const tiers = ['S', 'A', 'B', 'C', 'D'];
-  const items = ['Item 1', 'Item 2', 'Item 3', 'TEST'];
+  const [droppedItems, setDroppedItems] = useState({ S: [], A: [], B: [], C: [], D: [] });
+  const [numArtists, setNumArtists] = useState(10); // Default number of artists to display
 
-  const [droppedItems, setDroppedItems] = useState({});
+  useEffect(() => {
+    const fetchTopArtistsData = async () => {
+      try {
+        if (!loggedin()) {
+          console.log('User not logged in');
+          return;
+        }
 
+        const accessToken = localStorage.getItem('access_token');
+        const initialDroppedItems = tiers.reduce((acc, tier) => {
+          acc[tier] = [];
+          return acc;
+        }, {});
+
+        let allArtists = [];
+        const artistIdsSet = new Set(); // Use a Set to keep track of unique artist IDs
+        const limit = 100; // Maximum limit to fetch more artists
+        let offset = 0;
+
+        // Fetch more artists than needed to ensure enough unique ones
+        while (artistIdsSet.size < numArtists) {
+          const topArtistsData = await getTopArtists(accessToken, limit, offset);
+          if (!topArtistsData || !topArtistsData.items || topArtistsData.items.length === 0) {
+            break; // No more artists to fetch
+          }
+
+          // Filter and collect unique artists
+          topArtistsData.items.forEach((artist) => {
+            if (!artistIdsSet.has(artist.id)) {
+              artistIdsSet.add(artist.id);
+              allArtists.push(artist);
+            }
+          });
+
+          offset += limit;
+        }
+
+        // Take only the specified number of unique artists
+        const uniqueArtists = allArtists.slice(0, numArtists);
+
+        // Update droppedItems state with fetched artists
+        setDroppedItems({ ...initialDroppedItems, items: uniqueArtists });
+      } catch (error) {
+        console.error('Error fetching top artists:', error);
+      }
+    };
+
+    // Call the function to fetch data when the component mounts or when numArtists changes
+    fetchTopArtistsData();
+  }, [numArtists]); // Trigger effect whenever numArtists changes
+
+  // Function to handle dropping an artist into a tier
   const handleDrop = (tier, itemId, e) => {
-    e.preventDefault(); // Prevent default behavior of drag-and-drop
+    e.preventDefault();
+
+    // Add the dropped item (artist) to the specified tier
     setDroppedItems((prevItems) => ({
       ...prevItems,
-      [tier]: [...(prevItems[tier] || []), itemId],
+      [tier]: [...prevItems[tier], itemId],
     }));
   };
 
+  // Function to remove an artist from a tier
   const handleClearDrop = (tier, itemId) => {
+    // Remove the dropped item (artist) from the specified tier
     setDroppedItems((prevItems) => ({
       ...prevItems,
-      [tier]: prevItems[tier].filter((id) => id !== itemId),
+      [tier]: prevItems[tier].filter((item) => item.id !== itemId),
     }));
   };
 
-  // Define Tier component within TierList component
+  // Function to allow dropping items
+  const allowDrop = (e) => {
+    e.preventDefault();
+  };
+
+  // Component to render a draggable artist
+  const DraggableArtist = ({ artist, isSplitName }) => {
+    const imageUrl = artist.images && artist.images.length > 0 ? artist.images[0].url : '';
+    console.log('Image URL:', imageUrl); // Log the image URL
+  
+    const handleDragStart = (e) => {
+      e.dataTransfer.setData('application/json', JSON.stringify({ id: artist.id, imageUrl }));
+    };
+  
+    return (
+      <div className="draggable-artist" draggable onDragStart={handleDragStart}>
+        {imageUrl ? (
+          <img src={imageUrl} alt={artist.name} style={{ width: 90, height: 90 }} />
+        ) : (
+          <div style={{ width: 90, height: 90, backgroundColor: 'lightgray', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            No Image
+          </div>
+        )}
+        {/* Render artist name as split parts only when isSplitName is true and numArtists is 10 */}
+        {isSplitName && numArtists === 10 ? (
+          artist.name.split(' ').map((part, index) => (
+            <p key={index} style={{ margin: '0.2em 0' }}>{part}</p>
+          ))
+        ) : (
+          <p>{artist.name}</p>
+        )}
+      </div>
+    );
+  };
+  
+  
+
+  // Component to render a tier
   const Tier = ({ tier }) => {
-    const handleDropLocal = (itemId, e) => {
+    const handleDropLocal = (e) => {
+      const itemId = e.dataTransfer.getData('text/plain'); // Get the artist's ID from the drag data
       handleDrop(tier, itemId, e); // Call the handleDrop function from TierList component
     };
 
     const handleItemClick = (itemId) => {
-      handleClearDrop(tier, itemId); // Remove item from droppedItems
-    };
-
-    const allowDrop = (e) => {
-      e.preventDefault(); // Prevent default behavior of drag-and-drop
+      // Remove item (artist) from droppedItems of the current tier
+      handleClearDrop(tier, itemId);
     };
 
     return (
-      <div className="tier" onDrop={(e) => handleDropLocal(e.dataTransfer.getData('text/plain'), e)} onDragOver={allowDrop}>
-        <div className="drop-zone">Drop Item Here</div> {/* Display drop zone text */}
-        {droppedItems[tier]?.map((itemId) => (
-          <li key={itemId} onClick={() => handleItemClick(itemId)}>
-            {itemId}
-          </li>
+      <div className="tier" onDrop={handleDropLocal} onDragOver={allowDrop}>
+        {/* Render dropped items (artists) for the current tier */}
+        {droppedItems[tier]?.map((artist) => (
+          <div key={artist.id} className="artist-item" onClick={() => handleItemClick(artist.id)}>
+            {/* Display artist image if available, otherwise show placeholder */}
+            {artist.images && artist.images.length > 0 ? (
+              <img src={artist.images[0].url} alt={artist.name} style={{ width: 160, height: 160 }} />
+            ) : (
+              <div style={{ width: 90, height: 90, backgroundColor: 'lightgray', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                No Image
+              </div>
+            )}
+            <p>{artist.name}</p>
+          </div>
         ))}
       </div>
     );
@@ -52,33 +150,33 @@ const TierList = () => {
     <div className="tier-list-container">
       <h1>Tier List</h1>
 
+      {/* Render Tier components for each tier */}
       <div className="tier-list">
-        {/* Render tier pairs (e.g., S S, A A, B B, C C, D D) */}
         {tiers.map((tier) => (
           <div key={tier} className="tier-pair">
             <div className={`tier-name tier-${tier.toLowerCase()}`}>
               <h2>{tier}</h2>
-              {/* Render dropped items for the current tier */}
-              <ul className="dropped-items">
-              </ul>
             </div>
-            {/* Render Tier component */}
+            {/* Render Tier component for the current tier */}
             <Tier tier={tier} /> {/* Pass tier prop to Tier component */}
           </div>
         ))}
       </div>
 
-      {/* Render draggable items */}
+      {/* Dropdown to select number of artists */}
+      <div>
+        <label htmlFor="numArtists">Number of Artists:</label>
+        <select id="numArtists" value={numArtists} onChange={(e) => setNumArtists(parseInt(e.target.value))}>
+          <option value={10}>10</option>
+          <option value={25}>25</option>
+          <option value={50}>50</option>
+        </select>
+      </div>
+
+      {/* Render draggable items (artists) */}
       <div className="items-container">
-        {items.map((item) => (
-          <div
-            key={item}
-            className="item"
-            draggable
-            onDragStart={(e) => e.dataTransfer.setData('text/plain', item)}
-          >
-            {item}
-          </div>
+        {droppedItems.items?.map((artist) => (
+          <DraggableArtist key={artist.id} artist={artist} isSplitName={true} />
         ))}
       </div>
     </div>
