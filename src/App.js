@@ -33,8 +33,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home toggleTheme={toggleTheme} />} />
         <Route path="FindMusic" element={<FindMusic toggleTheme={toggleTheme} />} />
-        <Route path="profile" element={<Profile toggleTheme={toggleTheme} />} />
         <Route path="TierListPage" element={<TierListPage toggleTheme={toggleTheme} />} />
+        <Route path="profile" element={<Profile toggleTheme={toggleTheme} />} />
       </Routes>
     </div>
   );

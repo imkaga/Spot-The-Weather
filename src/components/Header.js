@@ -16,10 +16,10 @@ export default function Header({ toggleTheme }) {
                             <Link to="FindMusic">Wyszukiwarka Muzyczna</Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="Profile">Profil</Link>
+                            <Link to="TierListPage">Tier List</Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="TierListPage">Tier List</Link>
+                            <Link to="Profile">Profil</Link>
                         </li>
                     </ul>
                 </nav>

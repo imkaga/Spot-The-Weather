@@ -211,6 +211,8 @@ function Home() {
         };
       }, []);
       
+      
+      
     useEffect(() => { // Effect for updating countdown timer
         if (countdown !== null) {
             const timer = setInterval(() => {
@@ -282,23 +284,24 @@ function Home() {
         }
     };
     
-    const mapWeatherToGenres = (weatherData) => { // Function for mapping weather to genres
-        // Map weather conditions to corresponding music genres
+    const mapWeatherToGenres = (weatherData) => {
         const weatherCondition = weatherData.weather[0].main.toLowerCase();
+    
         switch (weatherCondition) {
             case 'clear':
-                return 'pop'; // Example genre for clear weather
+                return ['pop', 'hip-hop']; // Example genres for clear weather
             case 'rain':
-                return 'chill'; // Example genre for rainy weather
+                return ['chill', 'jazz', 'classical']; // Example genres for rainy weather
             case 'clouds':
-                return 'rock'; // Example genre for cloudy weather
+                return ['rock']; // Example genre for cloudy weather
             case 'thunder':
-                return
+                return ['rock', 'metal']; // Example genres for thunderstorm
             // Add more cases for other weather conditions as needed
             default:
-                return 'pop'; // Default genre if weather condition doesn't match any specific genre
+                return ['pop']; // Default genre if weather condition doesn't match any specific genre
         }
     };
+    
 
     const savePlaylist = async () => { // Function for saving playlist
         try {
@@ -354,12 +357,14 @@ function Home() {
         setIsPlaying(true); // Set playing state to true when starting playback
       };
       
+      
       const handlePause = () => {
         if (currentPreview) {
           Utils.pausePreview(currentPreview);
           setIsPlaying(false); // Update playing state to false when pausing
         }
       };
+      
 
     const addTracksToPlaylist = async (accessToken, userId, playlistId, trackUris) => { // Function for adding tracks to playlist
         const url = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`;
@@ -429,8 +434,8 @@ function Home() {
                         )}
                         {recommendedTracks.length > 0 && (
                             <div>
-                                <h3>Recommended Songs</h3>
-                                <button onClick={savePlaylist}>Save Playlist</button>
+                                <h3>Rekomendowane piosenki:</h3>
+                                <button onClick={savePlaylist}>Zapisz Playlistę</button>
                                 <div class="recommended-main">
                                 <ul>
                                     {recommendedTracks.map((track, index) => (
@@ -445,18 +450,17 @@ function Home() {
                                                 {/* Check if track has preview URL and render audio player */}
                                                 <br></br>
                                                 {track.preview_url ? (
-                                                <>
-                                                    {playingTrack === track && isPlaying ? (
-                                                    <button onClick={handlePause}>Pause</button>
-                                                    ) : (
-                                                    <button onClick={() => handlePreviewPlay(track.preview_url, track)}>
-                                                        Play
-                                                    </button>
-                                                    )}
-                                                </>
-                                                ) : (
-                                                <p className="song-preview">Preview not available</p>
-                                                )}
+  <>
+    {playingTrack === track && isPlaying ? (
+      <button onClick={handlePause}>Pause</button>
+    ) : (
+      <button onClick={() => handlePreviewPlay(track.preview_url, track)}>Play</button>
+    )}
+  </>
+) : (
+  <p className="song-preview">Preview not available</p>
+)}
+
                                             </div>
                                         </li>
                                     ))}
@@ -471,7 +475,7 @@ function Home() {
                 {loggedIn ? (
                     <button onClick={handleLogout}>Logout</button>
                 ) : (
-                    <button onClick={handleLogin}>Login with Spotify</button>
+                    <button class="login" onClick={handleLogin}>Zaloguj się ze Spotify</button>
                 )}
             </div>
         </>

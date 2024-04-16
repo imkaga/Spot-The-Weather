@@ -71,7 +71,6 @@ const FindMusic = () => {
     return subgenre.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   };
   
-
   const handleSubgenreChange = (event) => {
     const selectedSubgenre = event.target.value;
     setSelectedSubgenre(selectedSubgenre);
@@ -135,9 +134,6 @@ const FindMusic = () => {
     }
   };
   
-  
-  
-
   // Lista gatunków
   const genreSubgenres = {
     pop: [
@@ -216,7 +212,6 @@ const FindMusic = () => {
   };
 }, []);
 
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!selectedGenre) {
@@ -271,7 +266,6 @@ const FindMusic = () => {
       console.error("Error fetching recommended tracks:", error);
     }
   };
-  
 
   return (
     <>
@@ -279,10 +273,6 @@ const FindMusic = () => {
         <>
         <div className="card">
           <h1>Find Music</h1>
-          <p>
-            Ważne! Popularność muzyki nie jest określana przez ilość odsłuchań,
-            a jak często była odsłuchiwana w ostatnim czasie.{" "}
-          </p>
           <br></br>
           <div>
             <form onSubmit={handleSubmit}>
@@ -346,7 +336,7 @@ const FindMusic = () => {
           </div>
 
           <div>
-            <h3>Recommended Songs</h3>
+            {/* <h3>Wyniki twojego wyszukiwania</h3> */}
             <div className="recommended-main">
               <ul>
               {recommendedTracks.map((track, index) => (

@@ -125,7 +125,7 @@ export async function refreshAccessToken(refreshToken) {
 export async function getTopArtists(accessToken) {
     // Function to fetch user's top artists
     console.log('Access Token:', accessToken); // Log the access token
-    const url = 'https://api.spotify.com/v1/me/top/artists?limit=5';
+    const url = 'https://api.spotify.com/v1/me/top/artists?limit=50&time_range=long_term';
     const response = await fetch(url, {
         headers: {
             'Authorization': `Bearer ${accessToken}`
@@ -141,6 +141,7 @@ export async function getTopArtists(accessToken) {
     console.log('Top Artists Data:', data); // Log the response data
     return data;
 }
+
 
 export async function fetchWeatherData(city) {
     try {
@@ -336,10 +337,12 @@ export const playPreview = (previewUrl, setCurrentPreview) => {
     return audio; // Return the audio element for further control
   };
   
-  // Function to pause the currently playing audio preview
-  export const pausePreview = (currentPreview) => {
+// Utils.js
+export const pausePreview = (currentPreview) => {
     if (currentPreview instanceof Audio) {
       currentPreview.pause();
+      // Optionally, reset the audio to the beginning
+      currentPreview.currentTime = 0;
     }
   };
   
