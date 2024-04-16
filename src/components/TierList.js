@@ -94,7 +94,7 @@ const TierList = () => {
     return (
       <div className="draggable-artist" draggable onDragStart={handleDragStart}>
         {imageUrl ? (
-          <img src={imageUrl} alt={artist.name} style={{ width: 90, height: 90 }} />
+          <img src={imageUrl} alt={artist.name} style={{ width: 90, height: 90 }} /> // Ten poprawnie działający image
         ) : (
           <div style={{ width: 90, height: 90, backgroundColor: 'lightgray', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             No Image
@@ -112,8 +112,6 @@ const TierList = () => {
     );
   };
   
-  
-
   // Component to render a tier
   const Tier = ({ tier }) => {
     const handleDropLocal = (e) => {
