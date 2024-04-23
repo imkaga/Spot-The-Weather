@@ -264,18 +264,36 @@ function Home() {
 
     const recommendSongs = async () => {
         try {
-            console.log('Refreshing recommendations...'); // Console log to indicate refreshing recommendations
             const accessToken = localStorage.getItem('access_token');
-            const weatherGenre = mapWeatherToGenres(weatherData); // Get the mapped genre based on weather
-            const response = await Utils.getRecommendations(accessToken, null, weatherGenre, null);
-            localStorage.setItem('recommendedTracks', JSON.stringify(response.tracks)); // Store recommended tracks in localStorage
+            const weatherGenres = mapWeatherToGenres(weatherData);
+    
+            // Calculate total weight sum for genre probabilities
+            const totalWeight = weatherGenres.reduce((sum, genre) => sum + genre.weight, 0);
+    
+            // Randomly select a genre based on weighted probabilities
+            let randomNumber = Math.random() * totalWeight;
+            let selectedGenre = null;
+    
+            for (const genre of weatherGenres) {
+                if (randomNumber < genre.weight) {
+                    selectedGenre = genre.genre;
+                    break;
+                }
+                randomNumber -= genre.weight;
+            }
+    
+            // Fetch recommendations based on the selected genre
+            const response = await Utils.getRecommendations(accessToken, null, [selectedGenre], null);
+            localStorage.setItem('recommendedTracks', JSON.stringify(response.tracks));
             setRecommendedTracks(response.tracks);
+    
             localStorage.setItem('lastRefreshTime', Date.now());
             setLastRefreshTime(Date.now());
-            setRefreshCount(prevCount => {
+    
+            setRefreshCount((prevCount) => {
                 if (prevCount + 1 === 5) {
                     setCountdown(5 * 60 * 1000);
-                    setShowButton(false); // Hide the button after 5 clicks
+                    setShowButton(false);
                 }
                 return prevCount + 1;
             });
@@ -284,23 +302,44 @@ function Home() {
         }
     };
     
+    
     const mapWeatherToGenres = (weatherData) => {
         const weatherCondition = weatherData.weather[0].main.toLowerCase();
     
         switch (weatherCondition) {
             case 'clear':
-                return ['pop', 'hip-hop']; // Example genres for clear weather
+                return [
+                    { genre: 'pop', weight: 50 },
+                    { genre: 'hip-hop', weight: 15 },
+                    { genre: 'electronic', weight: 15 },
+                    { genre: 'disco', weight: 10 },
+                    { genre: 'indie', weight: 10 }
+                ];
             case 'rain':
-                return ['chill', 'jazz', 'classical']; // Example genres for rainy weather
+                return [
+                    { genre: 'classical', weight: 40 },
+                    { genre: 'jazz', weight: 30 },
+                    { genre: 'folk', weight: 10 }
+                ];
             case 'clouds':
-                return ['rock']; // Example genre for cloudy weather
+                return [
+                    { genre: 'indie', weight: 50 },
+                    { genre: 'rock', weight: 30 },
+                    { genre: 'hip-hop', weight: 20 },
+                    { genre: 'jazz', weight: 10 }
+                ];
             case 'thunder':
-                return ['rock', 'metal']; // Example genres for thunderstorm
-            // Add more cases for other weather conditions as needed
+                return [
+                    { genre: 'rock', weight: 50 },
+                    { genre: 'metal', weight: 50 }
+                ];
             default:
-                return ['pop']; // Default genre if weather condition doesn't match any specific genre
+                return [
+                    { genre: 'pop', weight: 100 }
+                ];
         }
     };
+    
     
 
     const savePlaylist = async () => { // Function for saving playlist
@@ -365,6 +404,21 @@ function Home() {
         }
       };
       
+      const translateWeatherCondition = (condition) => {
+        switch (condition.toLowerCase()) {
+            case 'clear':
+                return 'Słonecznie';
+            case 'rain':
+                return 'Deszczowo';
+            case 'clouds':
+                return 'Pochmurnie';
+            case 'thunder':
+                return 'Burzowo';
+            default:
+                return 'Inny';
+        }
+    };
+    
 
     const addTracksToPlaylist = async (accessToken, userId, playlistId, trackUris) => { // Function for adding tracks to playlist
         const url = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`;
@@ -413,7 +467,7 @@ function Home() {
                                 <h3>Cześć, {userName}!</h3>
                             )}
                             <h2>Pogoda dla miasta {weatherData.name}</h2>
-                            <p>Warunki Pogodowe: {weatherData.weather[0].main}</p>
+                            <p>Warunki Pogodowe: {translateWeatherCondition(weatherData.weather[0].main)}</p>
                             <p>Temperatura: {Math.round(weatherData.main.temp)}°C</p>
                             <p>Wilgotność: {weatherData.main.humidity}%</p>
                         </div>
@@ -428,15 +482,15 @@ function Home() {
                             </div>
                         )}
                         {loggedIn && showButton && ( // Check both loggedIn and showButton states
-                            <button onClick={recommendedTracks.length > 0 ? recommendSongs : recommendSongs}>
+                            <button className='recommend-songs' onClick={recommendedTracks.length > 0 ? recommendSongs : recommendSongs}>
                                 {recommendedTracks.length > 0 ? "Refresh Recommendations" : "Recommend Songs"}
                             </button>
                         )}
                         {recommendedTracks.length > 0 && (
                             <div>
                                 <h3>Rekomendowane piosenki:</h3>
-                                <button onClick={savePlaylist}>Zapisz Playlistę</button>
-                                <div class="recommended-main">
+                                <button className='recommend-songs' onClick={savePlaylist}>Zapisz Playlistę</button>
+                                <div className="recommended-main">
                                 <ul>
                                     {recommendedTracks.map((track, index) => (
                                         <li key={index}>
@@ -475,7 +529,7 @@ function Home() {
                 {loggedIn ? (
                     <button onClick={handleLogout}>Logout</button>
                 ) : (
-                    <button class="login" onClick={handleLogin}>Zaloguj się ze Spotify</button>
+                    <button className="login" onClick={handleLogin}>Zaloguj się ze Spotify</button>
                 )}
             </div>
         </>

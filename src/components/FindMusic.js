@@ -276,7 +276,7 @@ const FindMusic = () => {
           <br></br>
           <div>
             <form onSubmit={handleSubmit}>
-            <div class="form-container">
+            <div className="form-container">
               <label>Gatunek:</label>
               <select value={selectedGenre} onChange={handleGenreChange}>
                 <option value="">-</option>

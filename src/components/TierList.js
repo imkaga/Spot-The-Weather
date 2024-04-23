@@ -4,7 +4,9 @@ import { getTopArtists, getRandomArtists, loggedin } from './Utils'; // Import n
 const TierList = () => {
   const tiers = ['S', 'A', 'B', 'C', 'D'];
   const [droppedItems, setDroppedItems] = useState({ S: [], A: [], B: [], C: [], D: [] });
+  const [draggableItems, setDraggableItems] = useState([]);
   const [numArtists, setNumArtists] = useState(10); // Default number of artists to display
+  const [droppedArtistIds, setDroppedArtistIds] = useState(new Set());
 
   useEffect(() => {
     const fetchTopArtistsData = async () => {
@@ -59,23 +61,37 @@ const TierList = () => {
 
   // Function to handle dropping an artist into a tier
   const handleDrop = (tier, itemId, e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // Add the dropped item (artist) to the specified tier
-    setDroppedItems((prevItems) => ({
-      ...prevItems,
-      [tier]: [...prevItems[tier], itemId],
-    }));
-  };
+  // Update droppedItems state to add the dropped artist to the specified tier
+  setDroppedItems((prevItems) => ({
+    ...prevItems,
+    [tier]: [...prevItems[tier], itemId],
+  }));
+
+  // Remove the dropped artist from draggableItems
+  setDraggableItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+};
+
 
   // Function to remove an artist from a tier
   const handleClearDrop = (tier, itemId) => {
-    // Remove the dropped item (artist) from the specified tier
-    setDroppedItems((prevItems) => ({
-      ...prevItems,
-      [tier]: prevItems[tier].filter((item) => item.id !== itemId),
-    }));
-  };
+  // Remove the dropped item (artist) from the specified tier
+  setDroppedItems((prevItems) => ({
+    ...prevItems,
+    [tier]: prevItems[tier].filter((item) => item.id !== itemId),
+  }));
+
+  // Add the removed artist back to draggableItems
+  setDraggableItems((prevItems) => [...prevItems, { id: itemId }]);
+  
+  // Remove artist ID from droppedArtistIds
+  setDroppedArtistIds((prevIds) => {
+    const newIds = new Set(prevIds);
+    newIds.delete(itemId);
+    return newIds;
+  });
+};
 
   // Function to allow dropping items
   const allowDrop = (e) => {
@@ -85,11 +101,11 @@ const TierList = () => {
   // Component to render a draggable artist
   const DraggableArtist = ({ artist, isSplitName }) => {
     const imageUrl = artist.images && artist.images.length > 0 ? artist.images[0].url : '';
-    console.log('Image URL:', imageUrl); // Log the image URL
   
     const handleDragStart = (e) => {
       e.dataTransfer.setData('application/json', JSON.stringify({ id: artist.id, imageUrl }));
     };
+    
   
     return (
       <div className="draggable-artist" draggable onDragStart={handleDragStart}>
@@ -115,31 +131,61 @@ const TierList = () => {
   // Component to render a tier
   const Tier = ({ tier }) => {
     const handleDropLocal = (e) => {
-      const itemId = e.dataTransfer.getData('text/plain'); // Get the artist's ID from the drag data
-      handleDrop(tier, itemId, e); // Call the handleDrop function from TierList component
+      e.preventDefault();
+      
+      // Log the data being retrieved from dataTransfer
+      const jsonData = e.dataTransfer.getData('application/json');
+      console.log('Drag data:', jsonData);
+      
+      // Proceed with parsing and handling the dropped data
+      try {
+        const { id, imageUrl } = JSON.parse(jsonData);
+        console.log('Parsed JSON:', id, imageUrl);
+        
+        // Update droppedItems for the current tier
+        setDroppedItems((prevItems) => ({
+          ...prevItems,
+          [tier]: [...prevItems[tier], { id, imageUrl }],
+        }));
+        
+        // Remove the dropped item from draggableItems
+        setDraggableItems((prevItems) => prevItems.filter((item) => item.id !== id));
+        
+        // Remove the dropped item from the main draggableItems list
+        setDroppedArtistIds((prevIds) => {
+          const newIds = new Set(prevIds);
+          newIds.add(id);
+          return newIds;
+        });
+      } catch (error) {
+        console.error('JSON Parse Error:', error);
+      }
     };
+    
+    
+    
 
     const handleItemClick = (itemId) => {
       // Remove item (artist) from droppedItems of the current tier
       handleClearDrop(tier, itemId);
     };
+    
 
     return (
       <div className="tier" onDrop={handleDropLocal} onDragOver={allowDrop}>
         {/* Render dropped items (artists) for the current tier */}
         {droppedItems[tier]?.map((artist) => (
-          <div key={artist.id} className="artist-item" onClick={() => handleItemClick(artist.id)}>
-            {/* Display artist image if available, otherwise show placeholder */}
-            {artist.images && artist.images.length > 0 ? (
-              <img src={artist.images[0].url} alt={artist.name} style={{ width: 160, height: 160 }} />
-            ) : (
-              <div style={{ width: 90, height: 90, backgroundColor: 'lightgray', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                No Image
-              </div>
-            )}
-            <p>{artist.name}</p>
-          </div>
-        ))}
+  <div key={artist.id} className="artist-item" onClick={() => handleItemClick(artist.id)}>
+    {artist.imageUrl ? (
+      <img src={artist.imageUrl} alt={artist.name} style={{ width: 90, height: 90 }} />
+    ) : (
+      <div style={{ width: 90, height: 90, backgroundColor: 'lightgray', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        No Image
+      </div>
+    )}
+    <p>{artist.name}</p>
+  </div>
+))}
       </div>
     );
   };
@@ -171,12 +217,14 @@ const TierList = () => {
         </select>
       </div>
 
+        
       {/* Render draggable items (artists) */}
-      <div className="items-container">
-        {droppedItems.items?.map((artist) => (
-          <DraggableArtist key={artist.id} artist={artist} isSplitName={true} />
-        ))}
-      </div>
+<div className="items-container">
+  {droppedItems.items?.filter((artist) => !droppedArtistIds.has(artist.id)).map((artist) => (
+    <DraggableArtist key={artist.id} artist={artist} isSplitName={true} />
+  ))}
+</div>
+
     </div>
   );
 };

@@ -7,7 +7,7 @@ body {
 /* Light theme */
 .light-theme { 
     background-color: #E8DED1;  /* Alternative - #E8DED1 */
-    color: #191414; /* Alternative - #e246ab */
+    color: #1DB954; /* Alternative - #e246ab */
 }
 
 .nav-item{
@@ -233,6 +233,18 @@ audio {
     padding: 10px;
     border-radius: 10px;
     text-decoration: none;
+}
+
+.recommend-songs {
+    text-decoration: none;
+    background-color: #2F8F51;
+    color: #fff;
+    font-weight: bold;
+    width: auto;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+    border-radius: 20px;
 }
 
 @media screen and (max-width: 1000px) {
