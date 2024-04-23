@@ -364,9 +364,10 @@ function Home() {
 
     const createPlaylist = async (accessToken, userId, weatherData) => { // Function for creating playlist
         const cityName = weatherData.name; // Extract city name from weather data
-        const weatherCondition = weatherData.weather[0].main.toLowerCase(); // Extract weather condition from weather data
+        //const weatherCondition = weatherData.weather[0].main.toLowerCase(); // Extract weather condition from weather data
+        const weatherCondition = translateWeatherCondition(weatherData.weather[0].main.toLowerCase());
         const formattedDate = `${new Date().getDate().toString().padStart(2, '0')}/${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getFullYear()}`;
-        const playlistName = `${cityName}-${weatherCondition}-${formattedDate}`;
+        const playlistName = `${cityName} ${weatherCondition} ${formattedDate}`;
 
         const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
         const response = await fetch(url, {
@@ -506,9 +507,9 @@ function Home() {
                                                 {track.preview_url ? (
   <>
     {playingTrack === track && isPlaying ? (
-      <button onClick={handlePause}>Pause</button>
+      <button onClick={handlePause}>Zapauzuj</button>
     ) : (
-      <button onClick={() => handlePreviewPlay(track.preview_url, track)}>Play</button>
+      <button onClick={() => handlePreviewPlay(track.preview_url, track)}>Odtwórz</button>
     )}
   </>
 ) : (
