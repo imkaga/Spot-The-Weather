@@ -428,7 +428,7 @@ function Home() {
                             </div>
                         )}
                         {loggedIn && showButton && ( // Check both loggedIn and showButton states
-                            <button onClick={recommendedTracks.length > 0 ? recommendSongs : recommendSongs}>
+                            <button className='recommend-songs' onClick={recommendedTracks.length > 0 ? recommendSongs : recommendSongs}>
                                 {recommendedTracks.length > 0 ? "Refresh Recommendations" : "Recommend Songs"}
                             </button>
                         )}

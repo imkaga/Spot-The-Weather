@@ -76,12 +76,23 @@ const TierList = () => {
 
   // Function to remove an artist from a tier
   const handleClearDrop = (tier, itemId) => {
-    // Remove the dropped item (artist) from the specified tier
-    setDroppedItems((prevItems) => ({
-      ...prevItems,
-      [tier]: prevItems[tier].filter((item) => item.id !== itemId),
-    }));
-  };
+  // Remove the dropped item (artist) from the specified tier
+  setDroppedItems((prevItems) => ({
+    ...prevItems,
+    [tier]: prevItems[tier].filter((item) => item.id !== itemId),
+  }));
+
+  // Add the removed artist back to draggableItems
+  setDraggableItems((prevItems) => [...prevItems, { id: itemId }]);
+  
+  // Remove artist ID from droppedArtistIds
+  setDroppedArtistIds((prevIds) => {
+    const newIds = new Set(prevIds);
+    newIds.delete(itemId);
+    return newIds;
+  });
+};
+
 
   // Function to allow dropping items
   const allowDrop = (e) => {
@@ -125,7 +136,7 @@ const TierList = () => {
       e.preventDefault();
       const { id, imageUrl } = JSON.parse(e.dataTransfer.getData('application/json'));
     
-      // Update droppedItems
+      // Update droppedItems for the current tier
       setDroppedItems((prevItems) => ({
         ...prevItems,
         [tier]: [...prevItems[tier], { id, imageUrl }],
@@ -133,7 +144,15 @@ const TierList = () => {
     
       // Remove the dropped item from draggableItems
       setDraggableItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    
+      // Remove the dropped item from the main draggableItems list
+      setDroppedArtistIds((prevIds) => {
+        const newIds = new Set(prevIds);
+        newIds.add(id);
+        return newIds;
+      });
     };
+    
     
 
     const handleItemClick = (itemId) => {
@@ -190,11 +209,12 @@ const TierList = () => {
 
         
       {/* Render draggable items (artists) */}
-      <div className="items-container">
-        {droppedItems.items?.map((artist) => (
-          <DraggableArtist key={artist.id} artist={artist} isSplitName={true} />
-        ))}
-      </div>
+<div className="items-container">
+  {droppedItems.items?.filter((artist) => !droppedArtistIds.has(artist.id)).map((artist) => (
+    <DraggableArtist key={artist.id} artist={artist} isSplitName={true} />
+  ))}
+</div>
+
     </div>
   );
 };
