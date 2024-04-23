@@ -5,6 +5,7 @@ import Home from './components/Home';
 import Profile from './components/Profile';
 import FindMusic from './components/FindMusic';
 import TierListPage from './components/TierListPage';
+// import Feelings from './components/Feelings';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/styles.css';
 import './App.css';

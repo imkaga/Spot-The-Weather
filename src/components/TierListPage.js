@@ -5,9 +5,7 @@ import '../styles/TierList.css';
 
 const TierListPage = () => {
   return (
-    <div className="tier-list-page">
       <TierList />
-    </div>
   );
 };
 

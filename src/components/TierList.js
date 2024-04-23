@@ -93,7 +93,6 @@ const TierList = () => {
   });
 };
 
-
   // Function to allow dropping items
   const allowDrop = (e) => {
     e.preventDefault();
@@ -102,7 +101,6 @@ const TierList = () => {
   // Component to render a draggable artist
   const DraggableArtist = ({ artist, isSplitName }) => {
     const imageUrl = artist.images && artist.images.length > 0 ? artist.images[0].url : '';
-    console.log('Image URL:', imageUrl); // Log the image URL
   
     const handleDragStart = (e) => {
       e.dataTransfer.setData('application/json', JSON.stringify({ id: artist.id, imageUrl }));
@@ -134,24 +132,36 @@ const TierList = () => {
   const Tier = ({ tier }) => {
     const handleDropLocal = (e) => {
       e.preventDefault();
-      const { id, imageUrl } = JSON.parse(e.dataTransfer.getData('application/json'));
-    
-      // Update droppedItems for the current tier
-      setDroppedItems((prevItems) => ({
-        ...prevItems,
-        [tier]: [...prevItems[tier], { id, imageUrl }],
-      }));
-    
-      // Remove the dropped item from draggableItems
-      setDraggableItems((prevItems) => prevItems.filter((item) => item.id !== id));
-    
-      // Remove the dropped item from the main draggableItems list
-      setDroppedArtistIds((prevIds) => {
-        const newIds = new Set(prevIds);
-        newIds.add(id);
-        return newIds;
-      });
+      
+      // Log the data being retrieved from dataTransfer
+      const jsonData = e.dataTransfer.getData('application/json');
+      console.log('Drag data:', jsonData);
+      
+      // Proceed with parsing and handling the dropped data
+      try {
+        const { id, imageUrl } = JSON.parse(jsonData);
+        console.log('Parsed JSON:', id, imageUrl);
+        
+        // Update droppedItems for the current tier
+        setDroppedItems((prevItems) => ({
+          ...prevItems,
+          [tier]: [...prevItems[tier], { id, imageUrl }],
+        }));
+        
+        // Remove the dropped item from draggableItems
+        setDraggableItems((prevItems) => prevItems.filter((item) => item.id !== id));
+        
+        // Remove the dropped item from the main draggableItems list
+        setDroppedArtistIds((prevIds) => {
+          const newIds = new Set(prevIds);
+          newIds.add(id);
+          return newIds;
+        });
+      } catch (error) {
+        console.error('JSON Parse Error:', error);
+      }
     };
+    
     
     
 

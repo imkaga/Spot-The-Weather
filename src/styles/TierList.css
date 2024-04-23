@@ -1,9 +1,11 @@
 .tier-list-container {
   text-align: center;
-  margin-top: 50px;
-  background-color: gray;
-  margin: 50px;
+  background-color: #1EBA55 ;
+  margin: 100px;
   border-radius: 15px;
+  margin-top: 0px;
+  max-width: 1200px;
+  color: #fff;
 }
 
 .tier-pair {
