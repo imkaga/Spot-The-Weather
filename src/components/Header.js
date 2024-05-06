@@ -13,9 +13,6 @@ export default function Header({ toggleTheme }) {
                             <Link to="/">Strona Główna</Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="Feelings">Muzyka Dla Uczuć</Link>
-                        </li>
-                        <li className="nav-item">
                             <Link to="FindMusic">Wyszukiwarka Muzyczna</Link>
                         </li>
                         <li className="nav-item">

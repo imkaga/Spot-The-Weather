@@ -20,7 +20,6 @@ function Home() {
     const [playingTrack, setPlayingTrack] = useState(null); // State to track the currently playing track
     const [isPlaying, setIsPlaying] = useState(false);
     
-
     const handleLogin = Utils.authenticate; // Function for handling login
 
     const handleLogout = () => {
@@ -404,8 +403,6 @@ function Home() {
         });
     };
     
-      
-      
       const handlePause = () => {
         if (currentPreview) {
           Utils.pausePreview(currentPreview);
