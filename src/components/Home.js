@@ -240,8 +240,8 @@ function Home() {
                 } else {
                     setWeatherData(data);
                     setErrorMessage('');
-                    localStorage.setItem('lastCity', city);
-                    setRefreshCount(0); // Reset refresh count when city is changed
+                    //localStorage.setItem('lastCity', city);
+                    // setRefreshCount(0); // Reset refresh count when city is changed
                     setShowButton(true); // Show the button after search
                 }
             });
@@ -387,15 +387,23 @@ function Home() {
         return response.json();
     };
 
+    
+
     const handlePreviewPlay = (previewUrl, track) => {
         if (currentPreview) {
-          Utils.pausePreview(currentPreview);
+            Utils.pausePreview(currentPreview);
         }
-      
+    
         const audio = Utils.playPreview(previewUrl, setCurrentPreview);
         setPlayingTrack(track);
         setIsPlaying(true); // Set playing state to true when starting playback
-      };
+    
+        // Add event listener for audio ended to change button text when song finishes playing
+        audio.addEventListener('ended', () => {
+            setIsPlaying(false); // Update playing state to false when song finishes playing
+        });
+    };
+    
       
       
       const handlePause = () => {
