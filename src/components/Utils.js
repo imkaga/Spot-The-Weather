@@ -338,11 +338,14 @@ export const playPreview = (previewUrl, setCurrentPreview) => {
   };
   
 // Utils.js
+// Utils.js
+
 export const pausePreview = (currentPreview) => {
     if (currentPreview instanceof Audio) {
-      currentPreview.pause();
-      // Optionally, reset the audio to the beginning
-      currentPreview.currentTime = 0;
+        currentPreview.pause();
+        // Optionally, reset the audio to the beginning
+        currentPreview.currentTime = 0;
     }
-  };
+};
+
   

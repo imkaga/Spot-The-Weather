@@ -20,7 +20,6 @@ function Home() {
     const [playingTrack, setPlayingTrack] = useState(null); // State to track the currently playing track
     const [isPlaying, setIsPlaying] = useState(false);
     
-
     const handleLogin = Utils.authenticate; // Function for handling login
 
     const handleLogout = () => {
@@ -240,8 +239,8 @@ function Home() {
                 } else {
                     setWeatherData(data);
                     setErrorMessage('');
-                    localStorage.setItem('lastCity', city);
-                    setRefreshCount(0); // Reset refresh count when city is changed
+                    //localStorage.setItem('lastCity', city);
+                    // setRefreshCount(0); // Reset refresh count when city is changed
                     setShowButton(true); // Show the button after search
                 }
             });
@@ -364,9 +363,10 @@ function Home() {
 
     const createPlaylist = async (accessToken, userId, weatherData) => { // Function for creating playlist
         const cityName = weatherData.name; // Extract city name from weather data
-        const weatherCondition = weatherData.weather[0].main.toLowerCase(); // Extract weather condition from weather data
+        //const weatherCondition = weatherData.weather[0].main.toLowerCase(); // Extract weather condition from weather data
+        const weatherCondition = translateWeatherCondition(weatherData.weather[0].main.toLowerCase());
         const formattedDate = `${new Date().getDate().toString().padStart(2, '0')}/${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getFullYear()}`;
-        const playlistName = `${cityName}-${weatherCondition}-${formattedDate}`;
+        const playlistName = `${cityName} ${weatherCondition} ${formattedDate}`;
 
         const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
         const response = await fetch(url, {
@@ -386,17 +386,23 @@ function Home() {
         return response.json();
     };
 
+    
+
     const handlePreviewPlay = (previewUrl, track) => {
         if (currentPreview) {
-          Utils.pausePreview(currentPreview);
+            Utils.pausePreview(currentPreview);
         }
-      
+    
         const audio = Utils.playPreview(previewUrl, setCurrentPreview);
         setPlayingTrack(track);
         setIsPlaying(true); // Set playing state to true when starting playback
-      };
-      
-      
+    
+        // Add event listener for audio ended to change button text when song finishes playing
+        audio.addEventListener('ended', () => {
+            setIsPlaying(false); // Update playing state to false when song finishes playing
+        });
+    };
+    
       const handlePause = () => {
         if (currentPreview) {
           Utils.pausePreview(currentPreview);
@@ -506,9 +512,9 @@ function Home() {
                                                 {track.preview_url ? (
   <>
     {playingTrack === track && isPlaying ? (
-      <button onClick={handlePause}>Pause</button>
+      <button onClick={handlePause}>Zapauzuj</button>
     ) : (
-      <button onClick={() => handlePreviewPlay(track.preview_url, track)}>Play</button>
+      <button onClick={() => handlePreviewPlay(track.preview_url, track)}>Odtwórz</button>
     )}
   </>
 ) : (
