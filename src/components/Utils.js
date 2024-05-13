@@ -77,8 +77,6 @@ export async function handleAuthorizationCode() {
     }
 }
 
-// Utils.js
-
 export async function handleLogout(logoutCallback) {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
@@ -86,7 +84,6 @@ export async function handleLogout(logoutCallback) {
     logoutCallback(false); // Call the callback function to update login state
     window.location.href = '/';
 }
-
 
 export async function getProfile(accessToken) {
     // Function to fetch user's profile
