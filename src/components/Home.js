@@ -301,45 +301,59 @@ function Home() {
         }
     };
     
-    
     const mapWeatherToGenres = (weatherData) => {
         const weatherCondition = weatherData.weather[0].main.toLowerCase();
     
         switch (weatherCondition) {
             case 'clear':
                 return [
-                    { genre: 'pop', weight: 50 },
-                    { genre: 'hip-hop', weight: 15 },
+                    { genre: 'pop', weight: 40 },
+                    { genre: 'hip-hop', weight: 20 },
                     { genre: 'electronic', weight: 15 },
-                    { genre: 'disco', weight: 10 },
-                    { genre: 'indie', weight: 10 }
+                    { genre: 'disco', weight: 15 },
+                    { genre: 'rock', weight: 5 },
+                    { genre: 'metal', weight: 5 }
                 ];
             case 'rain':
                 return [
                     { genre: 'classical', weight: 40 },
-                    { genre: 'jazz', weight: 30 },
-                    { genre: 'folk', weight: 10 }
+                    { genre: 'jazz', weight: 25 },
+                    { genre: 'hip-hop', weight: 15 },
+                    { genre: 'folk', weight: 10 },
+                    { genre: 'rock', weight: 5 },
+                    { genre: 'metal', weight: 5 }
                 ];
             case 'clouds':
                 return [
-                    { genre: 'indie', weight: 50 },
-                    { genre: 'rock', weight: 30 },
-                    { genre: 'hip-hop', weight: 20 },
-                    { genre: 'jazz', weight: 10 }
+                    { genre: 'pop', weight: 30 },
+                    { genre: 'jazz', weight: 30 },
+                    { genre: 'rock', weight: 10 },
+                    { genre: 'metal', weight: 10 },
+                    { genre: 'indie', weight: 10 },
+                    { genre: 'new-age', weight: 10 }
                 ];
             case 'thunder':
                 return [
-                    { genre: 'rock', weight: 50 },
-                    { genre: 'metal', weight: 50 }
+                    { genre: 'rock', weight: 25 },
+                    { genre: 'metal', weight: 25 },
+                    { genre: 'classical', weight: 20 },
+                    { genre: 'pop', weight: 10 },
+                    { genre: 'hip-hop', weight: 10 },
+                    { genre: 'electronic', weight: 10 },
                 ];
+            case 'snow':
+                return [
+                    { genre: 'hip-hop', weight: 30 },
+                    { genre: 'jazz', weight: 30 },
+                    { genre: 'electronic', weight: 30 },
+                    { genre: 'classical', weight: 10 },
+                ]
             default:
                 return [
                     { genre: 'pop', weight: 100 }
                 ];
         }
-    };
-    
-    
+    };    
 
     const savePlaylist = async () => { // Function for saving playlist
         try {
@@ -352,12 +366,12 @@ function Home() {
                 // Add recommended tracks to the playlist
                 await addTracksToPlaylist(accessToken, userId, playlistId, recommendedTracks.map(track => track.uri));
 
-                console.log('Playlist created and tracks added successfully');
+                console.log('Utworzono playlistę i dodano utwory');
             } else {
-                console.error('Access token, user ID, or weather data not found');
+                console.error('Nie znaleziono tokena dostępu, ID użytkownika lub danych pogodowych');
             }
         } catch (error) {
-            console.error('Error saving playlist:', error);
+            console.error('Wystąpił problem przy zapisywaniu playlisty:', error);
         }
     };
 
