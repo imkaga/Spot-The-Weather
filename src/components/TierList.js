@@ -209,7 +209,7 @@ const TierList = () => {
 
       {/* Dropdown to select number of artists */}
       <div>
-        <label htmlFor="numArtists">Number of Artists:</label>
+        <label htmlFor="numArtists">Liczba artystów:</label>
         <select id="numArtists" value={numArtists} onChange={(e) => setNumArtists(parseInt(e.target.value))}>
           <option value={10}>10</option>
           <option value={25}>25</option>

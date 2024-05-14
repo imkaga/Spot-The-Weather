@@ -503,7 +503,7 @@ function Home() {
                         )}
                         {loggedIn && showButton && ( // Check both loggedIn and showButton states
                             <button className='recommend-songs' onClick={recommendedTracks.length > 0 ? recommendSongs : recommendSongs}>
-                                {recommendedTracks.length > 0 ? "Refresh Recommendations" : "Recommend Songs"}
+                                {recommendedTracks.length > 0 ? "Odśwież rekomendacje" : "Rekomenduj piosenki"}
                             </button>
                         )}
                         {recommendedTracks.length > 0 && (
@@ -524,16 +524,16 @@ function Home() {
                                                 {/* Check if track has preview URL and render audio player */}
                                                 <br></br>
                                                 {track.preview_url ? (
-  <>
-    {playingTrack === track && isPlaying ? (
-      <button onClick={handlePause}>Zapauzuj</button>
-    ) : (
-      <button onClick={() => handlePreviewPlay(track.preview_url, track)}>Odtwórz</button>
-    )}
-  </>
-) : (
-  <p className="song-preview">Preview not available</p>
-)}
+                                                    <>
+                                                        {playingTrack === track && isPlaying ? (
+                                                        <button onClick={handlePause}>Zapauzuj</button>
+                                                        ) : (
+                                                        <button onClick={() => handlePreviewPlay(track.preview_url, track)}>Odtwórz</button>
+                                                        )}
+                                                    </>
+                                                    ) : (
+                                                    <p className="song-preview">Podgląd niedostępny</p>
+                                                    )}
 
                                             </div>
                                         </li>
@@ -546,9 +546,7 @@ function Home() {
                 </div>
                 {/* <button onClick={() => Utils.saveAsImage('weather')}>Save Image</button> */}
 
-                {loggedIn ? (
-                    <button onClick={handleLogout}>Logout</button>
-                ) : (
+                {loggedIn ? null : ( // Render the "Zaloguj się" button only if the user is not logged in
                     <button className="login" onClick={handleLogin}>Zaloguj się ze Spotify</button>
                 )}
             </div>

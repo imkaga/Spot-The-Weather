@@ -119,9 +119,28 @@ header{
     display: none;
 }
 
+.button-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-btn {
+    font-size: 14px;
+    width: 110px;
+    height: 40px;
+    position: fixed;
+    top: auto;
+    right: 10px;
+    background-color: #1DB954;
+    color: white;
+    text-align: center;
+    border-radius: 25px;
+    margin-bottom: 10px;
+}
+
 .theme-btn {
     font-size: 14px;
-    width: 60px;
+    width: 110px;
     height: 40px;
     position: fixed;
     top: 10px;
@@ -130,6 +149,7 @@ header{
     color: white;
     text-align: center;
     border-radius: 25px;
+    margin-bottom: 10px;
 }
 
 .theme-btn:hover {
@@ -233,6 +253,7 @@ audio {
     padding: 10px;
     border-radius: 10px;
     text-decoration: none;
+    margin-top: 10px;
 }
 
 .recommend-songs {
@@ -245,6 +266,7 @@ audio {
     text-align: center;
     padding: 15px;
     border-radius: 20px;
+    margin-top: 10px;
 }
 
 @media screen and (max-width: 1000px) {

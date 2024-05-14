@@ -80,8 +80,10 @@ export async function handleAuthorizationCode() {
 export async function handleLogout(logoutCallback) {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    localStorage.removeItem('login_time'); // Remove login time on logout
-    logoutCallback(false); // Call the callback function to update login state
+    localStorage.removeItem('login_time');
+    if (logoutCallback && typeof logoutCallback === 'function') {
+        logoutCallback(false);
+    }
     window.location.href = '/';
 }
 
@@ -333,9 +335,6 @@ export const playPreview = (previewUrl, setCurrentPreview) => {
     setCurrentPreview(audio); // Set the current audio element
     return audio; // Return the audio element for further control
   };
-  
-// Utils.js
-// Utils.js
 
 export const pausePreview = (currentPreview) => {
     if (currentPreview instanceof Audio) {
@@ -344,5 +343,13 @@ export const pausePreview = (currentPreview) => {
         currentPreview.currentTime = 0;
     }
 };
+
+export function pauseAllSounds() {
+    const allSounds = document.querySelectorAll('audio'); // Get all audio elements
+    allSounds.forEach(sound => {
+        sound.pause(); // Pause each sound
+    });
+}
+
 
   
