@@ -337,12 +337,14 @@ export const playPreview = (previewUrl, setCurrentPreview) => {
   };
 
 export const pausePreview = (currentPreview) => {
+    console.log('Pausing preview:', currentPreview);
     if (currentPreview instanceof Audio) {
         currentPreview.pause();
         // Optionally, reset the audio to the beginning
         currentPreview.currentTime = 0;
     }
 };
+
 
 export function pauseAllSounds() {
     const allSounds = document.querySelectorAll('audio'); // Get all audio elements

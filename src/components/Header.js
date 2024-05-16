@@ -1,17 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { loggedin, handleLogout, pausePreview } from './Utils';
 import * as Utils from './Utils';
 
-export default function Header({ toggleTheme, currentPreview, setCurrentPreview, setIsPlaying, pausePreview }) {
-    const handleHeaderItemClick = () => {
-    if (currentPreview && typeof currentPreview.pause === 'function') {
-        Utils.pausePreview(currentPreview);
-        currentPreview.pause();
-    }
+export const handleHeaderItemClick = (itemName) => {
+    // console.log(`Header item clicked: ${itemName}`);
+    return itemName;
 };
 
 
+export default function Header({ toggleTheme, setIsPlaying = () => {} }) {
+    const [currentPreview, setCurrentPreview] = useState(null);
 
     return (
         <>
