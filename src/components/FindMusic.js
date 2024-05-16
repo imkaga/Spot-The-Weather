@@ -97,7 +97,7 @@ const FindMusic = () => {
   const getMaxTempo = (tempo) => {
     switch (tempo) {
       case "fast":
-        return 180;
+        return 200;
       case "slow":
         return 100;
       case "calm":
@@ -292,6 +292,7 @@ const FindMusic = () => {
                 <option value="folk">Folk</option>
                 <option value="inne">Inne</option>
               </select>
+              <br></br>
 
               <label>Podgatunek:</label>
               <select value={selectedSubgenre} onChange={handleSubgenreChange}>
@@ -302,7 +303,7 @@ const FindMusic = () => {
                   </option>
                 ))}
               </select>
-
+              <br></br>
 
               <label>Tempo:</label>
               <select value={tempo} onChange={handleTempoChange}>
@@ -311,6 +312,7 @@ const FindMusic = () => {
                 <option value="slow">Wolne</option>
                 <option value="calm">Spokojne</option>
               </select>
+              <br></br>
 
               <label>Popularność:</label>
               <select
@@ -323,6 +325,7 @@ const FindMusic = () => {
                 <option value="41-70">Popularne</option>
                 <option value="71-100">Bardzo Popularne</option>
               </select>
+              <br></br>
 
               <label>Ilość piosenek:</label>
               <select value={limit} onChange={handleLimitChange}>
@@ -331,9 +334,10 @@ const FindMusic = () => {
                 <option value="30">30</option>
               </select>
             </div>
-              <button type="submit">Recommend Songs</button>
+              <button className='recommend-songs' type="submit">Wyszukaj piosenki</button>
             </form>
           </div>
+          <br></br>
 
           <div>
             {/* <h3>Wyniki twojego wyszukiwania</h3> */}
@@ -377,8 +381,8 @@ const FindMusic = () => {
         </>
       ) : (
         <>
-          <h3>Żeby wyświetlić zaawartość tej strony - Zaloguj Się!</h3>
-          <button onClick={handleLogin}>Login with Spotify</button>
+          <h3>Żeby wyświetlić zawartość tej strony - Zaloguj Się!</h3>
+          <button className="login" onClick={handleLogin}>Zaloguj się ze Spotify</button>
         </>
       )}
     </>

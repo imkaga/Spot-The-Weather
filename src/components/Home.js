@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import * as Utils from './Utils'; // Import functions from Utils.js
+import { handleHeaderItemClick } from './Header';
 
 function Home() {
     const [city, setCity] = useState(''); // State for storing the city input
@@ -19,6 +20,7 @@ function Home() {
     const [currentPreview, setCurrentPreview] = useState(null); // State to track current audio preview
     const [playingTrack, setPlayingTrack] = useState(null); // State to track the currently playing track
     const [isPlaying, setIsPlaying] = useState(false);
+    
     
     const handleLogin = Utils.authenticate; // Function for handling login
 
@@ -423,6 +425,34 @@ function Home() {
           setIsPlaying(false); // Update playing state to false when pausing
         }
       };
+
+      const handleHeaderClick = (itemName) => {
+        const clickedItem = handleHeaderItemClick(itemName);
+        if (typeof clickedItem === "string") {
+            // Perform actions based on the clicked item
+            console.log("Clicked item:", clickedItem);
+            // Example: pause music if a specific item is clicked
+            Utils.pausePreview(currentPreview);
+          setIsPlaying(false); // Update playing state to false when pausing
+        }
+    };
+    
+
+    const pausePreviewAndSetIsPlaying = () => {
+        if (currentPreview) {
+            Utils.pausePreview(currentPreview);
+            setIsPlaying(false);
+        }
+    };
+
+      const handleHeaderItemClick = () => {
+        console.log("Header item clicked in Home");
+        if (currentPreview) {
+            Utils.pausePreview(currentPreview);
+            setIsPlaying(false); // Update playing state to false when pausing
+          }
+    };
+
       
       const translateWeatherCondition = (condition) => {
         switch (condition.toLowerCase()) {
@@ -503,7 +533,7 @@ function Home() {
                         )}
                         {loggedIn && showButton && ( // Check both loggedIn and showButton states
                             <button className='recommend-songs' onClick={recommendedTracks.length > 0 ? recommendSongs : recommendSongs}>
-                                {recommendedTracks.length > 0 ? "Refresh Recommendations" : "Recommend Songs"}
+                                {recommendedTracks.length > 0 ? "Odśwież rekomendacje" : "Rekomenduj piosenki"}
                             </button>
                         )}
                         {recommendedTracks.length > 0 && (
@@ -522,18 +552,18 @@ function Home() {
                                                 {/* Render track name and artists */}
                                                 <span style={{ fontWeight: 'bold' }}>{track.artists.map(artist => artist.name).join(', ')}</span> - {track.name}
                                                 {/* Check if track has preview URL and render audio player */}
-                                                <br></br>
+                                                <br></br> 
                                                 {track.preview_url ? (
-  <>
-    {playingTrack === track && isPlaying ? (
-      <button onClick={handlePause}>Zapauzuj</button>
-    ) : (
-      <button onClick={() => handlePreviewPlay(track.preview_url, track)}>Odtwórz</button>
-    )}
-  </>
-) : (
-  <p className="song-preview">Preview not available</p>
-)}
+                                                    <>
+                                                        {playingTrack === track && isPlaying ? (
+                                                        <button onClick={handlePause}>Zapauzuj</button>
+                                                        ) : (
+                                                        <button onClick={() => handlePreviewPlay(track.preview_url, track)}>Odtwórz</button>
+                                                        )}
+                                                    </>
+                                                    ) : (
+                                                    <p className="song-preview">Podgląd niedostępny</p>
+                                                    )}
 
                                             </div>
                                         </li>
@@ -546,9 +576,7 @@ function Home() {
                 </div>
                 {/* <button onClick={() => Utils.saveAsImage('weather')}>Save Image</button> */}
 
-                {loggedIn ? (
-                    <button onClick={handleLogout}>Logout</button>
-                ) : (
+                {loggedIn ? null : ( // Render the "Zaloguj się" button only if the user is not logged in
                     <button className="login" onClick={handleLogin}>Zaloguj się ze Spotify</button>
                 )}
             </div>

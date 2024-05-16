@@ -49,11 +49,11 @@ export default function Profile() {
             {loggedIn ? ( // Render content if logged in
                 <>
                     <h3>Cześć, {userName}!</h3>
-                    <button onClick={() => window.open(`https://open.spotify.com/user/${userId}`, '_blank')} className="spotify-profile-button">
-                        Go to Spotify Profile
+                    <button className='recommend-songs' onClick={() => window.open(`https://open.spotify.com/user/${userId}`, '_blank')}>
+                        Odwiedź profil na Spotify
                     </button>
                     <img src={profilePicture} alt="Profile" /> {/* Display profile picture */}
-                    <p>Followers: {followersCount}</p> {/* Display followers count */}
+                    <p>Liczba obserwujących: {followersCount}</p> {/* Display followers count */}
                     
                     <ol className="numbered-list">
                     <h2>Top 10 Piosenek:</h2>
@@ -66,8 +66,8 @@ export default function Profile() {
                 </>
             ) : ( // Render login message and button if not logged in
                 <>
-                    <h3>Żeby wyświetlić zaawartość tej strony - Zaloguj Się!</h3>
-                    <button onClick={handleLogin}>Login with Spotify</button>
+                    <h3>Żeby wyświetlić zawartość tej strony - Zaloguj Się!</h3>
+                    <button className="login" onClick={handleLogin}>Zaloguj się ze Spotify</button>
                 </>
             )}
         </>
