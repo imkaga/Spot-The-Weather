@@ -549,7 +549,12 @@ function Home() {
                                         <li key={index}>
                                             <div>
                                                 {/* Render album image */}
-                                                <img src={track.album.images[0].url} alt="Album Cover" style={{ width: '50px', height: '50px' }} />
+                                                {track.album && track.album.images && track.album.images.length > 0 ? (
+    <img src={track.album.images[0].url} alt="Album Cover" style={{ width: '50px', height: '50px' }} />
+) : (
+    <div>No Image Available</div>
+)}
+
                                             </div>
                                             <div>
                                                 {/* Render track name and artists */}

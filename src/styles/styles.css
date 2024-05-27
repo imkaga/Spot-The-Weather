@@ -108,7 +108,7 @@ header{
 
 .weather{
     height: 200px;
-    height: calc(auto + 100px);
+    height: 180px;
 }
 
 .error{
