@@ -26,7 +26,10 @@ function Home() {
 
     const handleLogout = () => {
         Utils.handleLogout(setLoggedIn); // Pass setLoggedIn as an argument
+        setRecommendedTracks([]); // Clear recommended tracks state
+        localStorage.removeItem('recommendedTracks'); // Remove recommended tracks from local storage
     };
+    
 
     useEffect(() => { // Effect for handling authorization code
         Utils.handleAuthorizationCode()
