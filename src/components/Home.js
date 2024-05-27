@@ -26,7 +26,10 @@ function Home() {
 
     const handleLogout = () => {
         Utils.handleLogout(setLoggedIn); // Pass setLoggedIn as an argument
+        setRecommendedTracks([]); // Clear recommended tracks state
+        localStorage.removeItem('recommendedTracks'); // Remove recommended tracks from local storage
     };
+    
 
     useEffect(() => { // Effect for handling authorization code
         Utils.handleAuthorizationCode()
@@ -546,7 +549,12 @@ function Home() {
                                         <li key={index}>
                                             <div>
                                                 {/* Render album image */}
-                                                <img src={track.album.images[0].url} alt="Album Cover" style={{ width: '50px', height: '50px' }} />
+                                                {track.album && track.album.images && track.album.images.length > 0 ? (
+    <img src={track.album.images[0].url} alt="Album Cover" style={{ width: '50px', height: '50px' }} />
+) : (
+    <div>No Image Available</div>
+)}
+
                                             </div>
                                             <div>
                                                 {/* Render track name and artists */}
