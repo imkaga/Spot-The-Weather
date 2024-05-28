@@ -137,14 +137,11 @@ const FindMusic = () => {
   // Lista gatunków
   const genreSubgenres = {
     pop: [
-      "dance-pop",
       "synth-pop",
       "pop-film",
       "r-n-b"
     ],
     "hip-hop": [
-      "rap",
-      "trap",
     ],
     rock: [
       "alt-rock",
@@ -154,25 +151,17 @@ const FindMusic = () => {
       "hard-rock",
       "heavy-metal",
       "new-age",
-      "new-wave",
       "metal",
       "metalcore",
       "punk",
-      "post-punk",
     ],
     indie: [
-      "dream-pop",
-      "indie-rock",
-      "indie-shoegaze",
-      "indietronica",
       "indie-pop",
     ],
     jazz: [], // Brak podgatunków do dopasowania
     classical: [
       "opera",
       "piano",
-      "baroque",
-      "romantic"
     ],
     electronic: [
       "dubstep",
@@ -183,13 +172,8 @@ const FindMusic = () => {
     ],
     disco: [
       "funk",
-      "nu-disco"
-    ],
-    "new-age": [ // Prawdopodobnie do wyjebania
-      "ambient",
     ],
     folk: [
-      "folk-rock",
       "sertanejo",
       "tango",
       "country"
@@ -197,7 +181,7 @@ const FindMusic = () => {
     inne: [
       "anime",
       "blues",
-      "bajo jajo"
+      "ambient",
     ],
   };
 
