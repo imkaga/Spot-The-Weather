@@ -272,7 +272,7 @@ const FindMusic = () => {
       {loggedIn ? (
         <>
         <div className="card">
-          <h1>Find Music</h1>
+          <h1>Wyszukiwarka Muzyczna</h1>
           <br></br>
           <div>
             <form onSubmit={handleSubmit}>
