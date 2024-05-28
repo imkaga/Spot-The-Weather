@@ -7,7 +7,6 @@
 <li>Rekomendacje muzyczne na podstawie pogody</li>
 
 <h4>Wymagania</h4>
-* Pobieranie aktualnej lokalizacji użytkownika
 * Możliwość zapisania playlisty z rekomendowanymi piosenkami
 
 <h2>Profil</h2>
@@ -17,11 +16,8 @@
 <li>Możliwość personalizowania profilu</li>
 <li>Możliwość generowania grafiki reprezentującej profil i zapisanie / udostępnienie do social mediów</li>
 
-<h2>[Nazwa strony do ustalenia]</h2>
-<i>Tutaj będą inne tryby gdzie użytkownik ma więcej wpływu na to co się dzieje</i>
-<li>Szybki jak wiatr - wybierz piosenki z BPM dopasowanym do prędkości wiatru</li>
-<li>Tier Lista artystów - Wybierz ilość twoich top artystów i poustawiaj ich w tabeli od najmniej lubianych do kochanych / Ewentualnie losowi artyści (można zrobić przełączanie trybów między top/random</li>
-<li>Czego się słucha? - Możliwość sprawdzenia popularnych piosenek z różnych regionów świata (mogłoby puszczać playlistę top 50 danego kraju lub też brać najpopularniejsze piosenki danego miasta czy coś)</li>
+<h2>Tier List</h2>
+Umieść ulubionych artystów na Tier Liście
 
 ## Twórcy
 
