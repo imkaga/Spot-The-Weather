@@ -14,7 +14,7 @@ export default function Header({ toggleTheme, setIsPlaying = () => {} }) {
 
     return (
         <>
-            <h1 className="is-size-1">Spot The Weather</h1>
+            <h1 className="is-size-1">WeatherTunes</h1>
             <header>
                 <nav className="nawigacja">
                     <button className="theme-btn" onClick={toggleTheme}>Zmień Motyw</button>

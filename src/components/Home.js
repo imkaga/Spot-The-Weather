@@ -498,7 +498,7 @@ function Home() {
                     <div className="search">
                         <input
                             type="text"
-                            placeholder="Enter city name"
+                            placeholder="Wprowadź nazwę miejscowości"
                             spellCheck="false"
                             value={city}
                             onChange={handleChange}
