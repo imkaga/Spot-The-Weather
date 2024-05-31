@@ -1,10 +1,11 @@
 .tier-list-container {
   text-align: center;
+  align-items: center;
   background-color: #1EBA55 ;
-  margin: 100px;
+  margin: 200px;
   border-radius: 15px;
   margin-top: 0px;
-  max-width: 1200px;
+  max-width: 1000px;
   color: #fff;
 }
 
@@ -102,8 +103,6 @@
   margin-top: 40px;
 }
 
-
-
 .item {
   width: 90px; /* Set width of each item */
   height: 120px; /* Set height of each item */
@@ -134,4 +133,70 @@
 
 .tier-d {
   background-color: aqua; /* D tier color */
+}
+
+@media screen and (max-width: 1330px) {
+  .tier-list-container {
+    margin: 5%;
+    border-radius: 25px;
+    margin-top: 0px;
+    max-width: 1000px;
+    width: 90%;
+    color: #fff;
+    margin-left: 10%;
+  }
+}
+
+@media screen and (max-width: 1120px) {
+  .tier-list-container {
+    margin-left: 5%;
+  }
+  .tier {
+    width: 600px; /* Adjust width of each tier */
+    min-height: 100px;
+  }
+
+  .artist-item {
+    display: flex; /* Use flexbox to arrange artist items */
+    flex-direction: column; /* Stack content vertically */
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+    margin-right: 5px; /* Add spacing between artist items */
+  }
+  
+  .artist-item img {
+    width: 90px; /* Set image width */
+    height: 90px; /* Set image height */
+    object-fit: cover; /* Ensure images maintain aspect ratio and cover the container */
+    border-radius: 50%; /* Round image corners */
+    margin-bottom: -10px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .tier {
+    width: 500px; /* Adjust width of each tier */
+    min-height: 100px;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .tier {
+    width: 400px; /* Adjust width of each tier */
+    min-height: 100px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .tier {
+    width: 300px; /* Adjust width of each tier */
+    min-height: 100px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .tier {
+    width: 200px; /* Adjust width of each tier */
+    min-height: 100px;
+  }
 }
