@@ -493,7 +493,7 @@ function Home() {
 
     return (
         <>
-            <div className="container">
+            {/* <div className="container"> */}
                 <div className="card">
                     <div className="search">
                         <input
@@ -587,7 +587,6 @@ function Home() {
                 {loggedIn ? null : ( // Render the "Zaloguj się" button only if the user is not logged in
                     <button className="login" onClick={handleLogin}>Zaloguj się ze Spotify</button>
                 )}
-            </div>
         </>
     );
 }
